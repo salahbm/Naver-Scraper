@@ -1,3 +1,4 @@
+import SearchBar from "@/components/SearchBar";
 import Image from "next/image";
 // import { getAllProducts } from "@/lib/actions"
 // import ProductCard from "@/components/ProductCard"
@@ -30,7 +31,7 @@ const Home = async () => {
               convert, engage, and retain more.
             </p>
 
-            {/* <Searchbar /> */}
+            <SearchBar />
           </div>
 
           {/* <HeroCarousel /> */}
