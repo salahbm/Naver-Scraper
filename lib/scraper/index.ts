@@ -54,7 +54,7 @@ export async function scrapeAmazonProduct(url: string) {
     const discountRate = $(".savingsPercentage").text().replace(/[-%]/g, "");
 
     // construct data object
-
+    const isOutOfStock = outOfStock === "in stock" ? false : true;
     const data = {
       url,
       title,
@@ -67,7 +67,7 @@ export async function scrapeAmazonProduct(url: string) {
       category: "category",
       reviewCount: 100,
       stars: 4.5,
-      isOutOfStock: outOfStock,
+      isOutOfStock,
       description,
       lowestPrice: Number(currentPrice) || Number(originalPrice),
       highestPrice: Number(originalPrice) || Number(currentPrice),

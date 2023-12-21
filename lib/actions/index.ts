@@ -71,3 +71,5 @@ export async function getAllProducts() {
     console.log(error.message);
   }
 }
+
+export async function getSimilarProducts(element: any) {}
