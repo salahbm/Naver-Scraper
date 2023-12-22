@@ -1,38 +1,45 @@
 "use client";
 import { scrapeAndStoreProduct } from "@/lib/actions";
+import navigateNaverMap from "@/lib/selenium";
 import React, { FormEvent, useState } from "react";
 
-const isValidAmazonProductUrl = (url: string) => {
-  try {
-    const parseUrl = new URL(url);
-    const hostName = parseUrl.hostname;
-    // check if hostname contains amazon link
-    if (
-      hostName.includes("amazon.com") ||
-      hostName.includes("amazon.") ||
-      hostName.endsWith("amazon")
-    ) {
-      return true;
-    }
-  } catch (error) {
-    console.log(error);
-  }
-};
+// const isValidAmazonProductUrl = (url: string) => {
+//   try {
+//     const parseUrl = new URL(url);
+//     const hostName = parseUrl.hostname;
+//     // check if hostname contains amazon link
+//     if (
+//       hostName.includes("amazon.com") ||
+//       hostName.includes("amazon.") ||
+//       hostName.endsWith("amazon")
+//     ) {
+//       return true;
+//     }
+//   } catch (error) {
+//     console.log(error);
+//   }
+// };
 
 const SearchBar = () => {
   const [searchPrompt, setSearchPrompt] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const isValidLink = isValidAmazonProductUrl(searchPrompt);
-    if (!isValidLink)
-      return alert(
-        "This works with only Amazon Market links, Please provide valid link"
-      );
+    // const isValidLink = isValidAmazonProductUrl(searchPrompt);
+    // if (!isValidLink)
+    //   return alert(
+    //     "This works with only Amazon Market links, Please provide valid link"
+    //   );
     // Scrap the product
     try {
       setIsLoading(true);
-      const product = await scrapeAndStoreProduct(searchPrompt);
+
+      const getSearchPromptUrl = await navigateNaverMap(searchPrompt);
+      console.log(
+        `file: SearchBar.tsx:38 ~ getSearchPromptUrl:`,
+        getSearchPromptUrl
+      );
+      // await scrapeAndStoreProduct(searchPrompt);
     } catch (error) {
       console.log(error);
     } finally {
@@ -46,7 +53,7 @@ const SearchBar = () => {
         type="text"
         value={searchPrompt}
         onChange={(e) => setSearchPrompt(e.target.value)}
-        placeholder="Enter product link"
+        placeholder="Enter Restaurant and Branch name"
         className="searchbar-input"
       />
 
