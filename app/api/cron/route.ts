@@ -8,7 +8,7 @@ import { connectDB } from "@/lib/database/mongoose";
 import Product from "@/lib/model/product.model";
 import { getEmailNotifyType } from "../../../lib/utils/index";
 
-export const maxDuration = 300; // This function can run for a maximum of 300 seconds
+export const maxDuration = 10; // This function can run for a maximum of 10 seconds
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
