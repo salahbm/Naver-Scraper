@@ -96,7 +96,7 @@ export const sendEmail = async (
   sendTo: string[]
 ) => {
   const mailOptions = {
-    from: "salahbm.001@gmail.com",
+    from: "salahiddinovich2565@gmail.com",
     to: sendTo,
     html: emailContent.body,
     subject: emailContent.subject,
