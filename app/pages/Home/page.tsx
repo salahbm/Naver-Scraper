@@ -1,4 +1,3 @@
-import HeroCarousel from "@/components/HeroCarousel";
 import ProductCard from "@/components/ProductCard";
 import SearchBar from "@/components/SearchBar";
 import { getAllProducts } from "@/lib/actions";
@@ -13,7 +12,7 @@ const Home = async () => {
         <div className="flex max-xl:flex-col gap-16">
           <div className="flex flex-col justify-center">
             <p className="small-text">
-              Smart Shopping Starts Here:
+              Start getting the data from Naver:
               <Image
                 src="/assets/icons/arrow-right.svg"
                 alt="arrow-right"
@@ -24,18 +23,11 @@ const Home = async () => {
 
             <h1 className="head-text">
               Unleash the Power of
-              <span className="text-primary"> PriceWise</span>
+              <span className="text-primary"> Naver Place</span>
             </h1>
-
-            <p className="mt-6">
-              Powerful, self-serve product and growth analytics to help you
-              convert, engage, and retain more.
-            </p>
 
             <SearchBar />
           </div>
-
-          <HeroCarousel />
         </div>
       </section>
 
