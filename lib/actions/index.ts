@@ -1,10 +1,4 @@
-"use server";
-import { revalidatePath } from "next/cache";
-import { connectDB } from "../database/mongoose";
-import Product from "../model/product.model";
 import { scrapeNaverData } from "../scraper";
-import { User } from "@/types";
-import { generateEmailBody, sendEmail } from "../nodemailer";
 
 export async function scrapeAndStoreProduct(restaurantUrl: string) {
   if (!restaurantUrl) return;
@@ -12,13 +6,22 @@ export async function scrapeAndStoreProduct(restaurantUrl: string) {
   try {
     // connectDB();
 
-    await scrapeNaverData(restaurantUrl);
+    // Retrieve existing data from local storage
+    const existingData: any[] = JSON.parse(
+      localStorage.getItem("storedData") || "[]"
+    );
 
-    // if (!scrapedProduct) return;
+    // Get new data
+    const scrapeData = await scrapeNaverData(restaurantUrl);
 
-    // let product = scrapedProduct;
+    // Add new data to the array
+    existingData.push(scrapeData);
+    console.log(`file: index.ts:19 ~ existingData:`, existingData);
 
-    // const existingProduct = await Product.findOne({ url: scrapedProduct.url });
+    // Save the updated array back to local storage
+    localStorage.setItem("storedData", JSON.stringify(existingData));
+
+    // const existingProduct = await Product.findOne({ url: scrapeData.url });
 
     // if (existingProduct) {
     //   const updatedPriceHistory: any = [
@@ -41,72 +44,72 @@ export async function scrapeAndStoreProduct(restaurantUrl: string) {
   }
 }
 
-export async function getProductById(productId: string) {
-  try {
-    connectDB();
+// export async function getProductById(productId: string) {
+//   try {
+//     connectDB();
 
-    const product = await Product.findOne({ _id: productId });
+//     const product = await Product.findOne({ _id: productId });
 
-    if (!product) return null;
+//     if (!product) return null;
 
-    return product;
-  } catch (error) {
-    console.log(error);
-  }
-}
+//     return product;
+//   } catch (error) {
+//     console.log(error);
+//   }
+// }
 
-export async function getAllProducts() {
-  try {
-    connectDB();
-    const products = await Product.find();
+// export async function getAllProducts() {
+//   try {
+//     connectDB();
+//     const products = await Product.find();
 
-    return products;
-  } catch (error: any) {
-    console.log(error.message);
-  }
-}
+//     return products;
+//   } catch (error: any) {
+//     console.log(error.message);
+//   }
+// }
 
-export async function getSimilarProducts(productId: string) {
-  try {
-    connectDB();
+// export async function getSimilarProducts(productId: string) {
+//   try {
+//     connectDB();
 
-    const currentProduct = await Product.findById(productId);
+//     const currentProduct = await Product.findById(productId);
 
-    if (!currentProduct) return null;
+//     if (!currentProduct) return null;
 
-    const similarProducts = await Product.find({
-      _id: { $ne: productId },
-    }).limit(3);
+//     const similarProducts = await Product.find({
+//       _id: { $ne: productId },
+//     }).limit(3);
 
-    return similarProducts;
-  } catch (error) {
-    console.log(error);
-  }
-}
+//     return similarProducts;
+//   } catch (error) {
+//     console.log(error);
+//   }
+// }
 
-export async function addUserEmailToProduct(
-  productId: string,
-  userEmail: string
-) {
-  try {
-    const product = await Product.findById(productId);
+// export async function addUserEmailToProduct(
+//   productId: string,
+//   userEmail: string
+// ) {
+//   try {
+//     const product = await Product.findById(productId);
 
-    if (!product) return;
+//     if (!product) return;
 
-    const userExists = product.users.some(
-      (user: User) => user.email === userEmail
-    );
+//     const userExists = product.users.some(
+//       (user: User) => user.email === userEmail
+//     );
 
-    if (!userExists) {
-      product.users.push({ email: userEmail });
+//     if (!userExists) {
+//       product.users.push({ email: userEmail });
 
-      await product.save();
+//       await product.save();
 
-      const emailContent = await generateEmailBody(product, "WELCOME");
+//       const emailContent = await generateEmailBody(product, "WELCOME");
 
-      await sendEmail(emailContent, [userEmail]);
-    }
-  } catch (error) {
-    console.log(error);
-  }
-}
+//       await sendEmail(emailContent, [userEmail]);
+//     }
+//   } catch (error) {
+//     console.log(error);
+//   }
+// }

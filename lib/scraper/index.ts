@@ -84,13 +84,15 @@ export async function scrapeNaverData(searchName: string): Promise<void> {
   await frame.click(".flicking-camera > a:nth-child(2)");
   // Wait for the menu container to be present
   const handleMenu = await frame.waitForSelector(
-    "#app-root > div > div > div > div:nth-child(6) > div > div:nth-child(2) > div > ul"
+    "#app-root > div > div > div > div:nth-child(6) > div > div:nth-child(2) > div > ul" ||
+      "#app-root > div > div > div > div:nth-child(6) > div:nth-child(2) > div.place_section.no_margin > div > ul"
   );
   if (!handleMenu) {
     throw new Error("No Menu List");
   }
 
   // Extract menu data
+
   const menu = await getMenu(
     ".VQvNX",
     ".gl2cc",
@@ -116,7 +118,7 @@ export async function scrapeNaverData(searchName: string): Promise<void> {
     socialLinks,
     menu,
   };
-  console.log(`file: index.ts:109 ~ data:`, data);
+
   browser.close();
   return data;
 }
