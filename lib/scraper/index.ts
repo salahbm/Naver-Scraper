@@ -61,7 +61,7 @@ export async function scrapeNaverData(searchName: string): Promise<void> {
     handleAddress
   );
   const phone = await frame.evaluate((el: any) => el.innerText, handlePhone);
-  if (!handleSocials) console.log("no socials");
+  if (!handleSocials) throw new Error("No Socials Link");
 
   const socialLinks = await frame.evaluate((element: HTMLBodyElement) => {
     const links = Array.from(element.querySelectorAll("a"));
@@ -81,22 +81,18 @@ export async function scrapeNaverData(searchName: string): Promise<void> {
   }
 
   // Click on the 'Menu' button
-  // await frame.click(".flicking-camera > a:nth-child(2)");
+  await frame.click(".flicking-camera > a:nth-child(2)");
+  // Wait for the menu container to be present
+  const handleMenu = await frame.waitForSelector(
+    "#app-root > div > div > div > div:nth-child(6) > div > div:nth-child(2) > div > ul"
+  );
+  if (!handleMenu) {
+    throw new Error("No Menu List");
+  }
 
-  // // Click on the 'See More' button if available
-  // let menu;
-  // let ul;
-  // // Handle the case where the menu information is in a different class for places that support ordering on Naver
-  // try {
-  //   ul = await frame.waitForSelector(".ZUYk_");
-  //   menu = await getMenu(".Sqg65", ".SSaNE", ul);
-  // } catch (error) {
-  //   ul = await frame.waitForSelector(".list_place_col1");
-  //   menu = await getMenu(".name", ".price", ul);
-  // }
+  // Extract menu data
+  const menu = await getMenu(".VQvNX", ".gl2cc", handleMenu);
 
-  browser.close();
-  // result[searchName] = menu;
   const data: any = {
     name,
     category,
@@ -104,12 +100,14 @@ export async function scrapeNaverData(searchName: string): Promise<void> {
     address,
     phone,
     socialLinks,
+    menu,
   };
   console.log(`file: index.ts:109 ~ data:`, data);
+  browser.close();
   return data;
 }
 
-function wait(sec: number): void {
+async function wait(sec: number) {
   let start = Date.now(),
     now = start;
   while (now - start < sec * 1000) {
@@ -123,16 +121,17 @@ async function getMenu(
   ul: any
 ): Promise<any[]> {
   const arr: any[] = [];
+
   const allName = await ul.$$(nameClass);
   const allPrice = await ul.$$(priceClass);
 
   for (const elementHandle of allName) {
     const name = await elementHandle.evaluate((n: any) => n.innerText);
     const priceElementHandle = allPrice[allName.indexOf(elementHandle)];
+
     const price = await priceElementHandle.evaluate((p: any) => p.innerText);
     arr.push({ name, price });
   }
-  console.log(arr);
 
   return arr;
 }
