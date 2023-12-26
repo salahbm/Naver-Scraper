@@ -1,6 +1,5 @@
 "use client";
 import { scrapeAndStoreProduct } from "@/lib/actions";
-import navigateAndGetNaverData from "@/lib/selenium";
 import React, { FormEvent, useState } from "react";
 
 const isValidNaverProductUrl = (url: string) => {
@@ -10,7 +9,7 @@ const isValidNaverProductUrl = (url: string) => {
     // check if hostname contains Naver link
     if (
       hostName.includes("naver.com") ||
-      hostName.includes("naver.") ||
+      hostName.includes("map.naver.") ||
       hostName.endsWith("naver")
     ) {
       return true;
@@ -34,9 +33,7 @@ const SearchBar = () => {
     try {
       setIsLoading(true);
 
-      const getSearchPromptUrl = await navigateAndGetNaverData(searchPrompt);
-
-      // await scrapeAndStoreProduct(searchPrompt);
+      await scrapeAndStoreProduct(searchPrompt);
     } catch (error) {
       console.log(error);
     } finally {

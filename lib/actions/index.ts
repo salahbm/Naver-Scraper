@@ -3,47 +3,41 @@
 import { revalidatePath } from "next/cache";
 import { connectDB } from "../database/mongoose";
 import Product from "../model/product.model";
-import { scrapeAmazonProduct } from "../scraper";
+import { scrapeNaverData } from "../scraper";
 import { getAveragePrice, getHighestPrice, getLowestPrice } from "../utils";
 import { User } from "@/types";
 import { generateEmailBody, sendEmail } from "../nodemailer";
 
-export async function scrapeAndStoreProduct(productUrl: string) {
-  if (!productUrl) return;
+export async function scrapeAndStoreProduct(restaurantUrl: string) {
+  if (!restaurantUrl) return;
 
   try {
-    connectDB();
+    // connectDB();
 
-    const scrapedProduct = await scrapeAmazonProduct(productUrl);
+    const scrapedProduct = await scrapeNaverData(restaurantUrl);
 
     if (!scrapedProduct) return;
 
-    let product = scrapedProduct;
+    // let product = scrapedProduct;
 
-    const existingProduct = await Product.findOne({ url: scrapedProduct.url });
+    // const existingProduct = await Product.findOne({ url: scrapedProduct.url });
 
-    if (existingProduct) {
-      const updatedPriceHistory: any = [
-        ...existingProduct.priceHistory,
-        { price: scrapedProduct.currentPrice },
-      ];
+    // if (existingProduct) {
+    //   const updatedPriceHistory: any = [
+    //     ...existingProduct.priceHistory,
 
-      product = {
-        ...scrapedProduct,
-        priceHistory: updatedPriceHistory,
-        lowestPrice: getLowestPrice(updatedPriceHistory),
-        highestPrice: getHighestPrice(updatedPriceHistory),
-        averagePrice: getAveragePrice(updatedPriceHistory),
-      };
-    }
+    //   ];
 
-    const newProduct = await Product.findOneAndUpdate(
-      { url: scrapedProduct.url },
-      product,
-      { upsert: true, new: true }
-    );
+    //   product = {
 
-    revalidatePath(`/products/${newProduct._id}`);
+    //   };
+    // }
+
+    // const newProduct = await Product.findOneAndUpdate(
+
+    // );
+
+    // revalidatePath(`/products/${newProduct._id}`);
   } catch (error: any) {
     throw new Error(`Failed to create/update product: ${error.message}`);
   }

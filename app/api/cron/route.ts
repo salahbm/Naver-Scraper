@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 
 import { getLowestPrice, getHighestPrice, getAveragePrice } from "@/lib/utils";
 
-import { scrapeAmazonProduct } from "@/lib/scraper";
+import { scrapeNaverData } from "@/lib/scraper";
 import { generateEmailBody, sendEmail } from "@/lib/nodemailer";
 import { connectDB } from "@/lib/database/mongoose";
 import Product from "@/lib/model/product.model";
@@ -24,7 +24,7 @@ export async function GET(request: Request) {
     const updatedProducts = await Promise.all(
       products.map(async (currentProduct) => {
         // Scrape product
-        const scrapedProduct = await scrapeAmazonProduct(currentProduct.url);
+        const scrapedProduct = await scrapeNaverData(currentProduct.url);
 
         if (!scrapedProduct) return;
 

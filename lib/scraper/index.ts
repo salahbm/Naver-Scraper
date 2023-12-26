@@ -1,81 +1,78 @@
-import axios from "axios";
-import * as cheerio from "cheerio";
-import { extractCurrency, extractPrice, getHighestPrice } from "../utils";
-import { extractDescription } from "../utils/index";
+import puppeteer from "puppeteer";
+import cheerio from "cheerio";
 
-export async function scrapeAmazonProduct(url: string) {
+export async function scrapeNaverData(url: string) {
   if (!url) return;
 
-  // Bright Data proxy configuration
-
-  const username = String(process.env.BRIGHT_DATA_USERNAME);
-  const password = String(process.env.BRIGHT_DATA_PASSWORD);
-  const port = 22225;
-  const session_id = (1000000 * Math.random()) | 0;
-
-  const option = {
-    auth: {
-      username: `${username}-session-${session_id}`,
-      password,
-    },
-    host: `brd.superproxy.io`,
-    port,
-    rejectUnauthorized: false,
-  };
-
   try {
-    const response = await axios.get(url, option);
-    const $ = cheerio.load(response.data);
+    // Launch Puppeteer and create a new page
+    const browser = await puppeteer.launch();
+    const page = await browser.newPage();
 
-    // extract the product data
-    const title = $("#productTitle").text().trim();
-    const currentPrice = extractPrice(
-      $("span.a-offscreen"),
-      $("span.a-price-whole"),
-      $("span.a-price-decimal"),
-      $("span.a-price-friction")
-    );
-    const originalPrice = extractPrice(
-      $("#priceblock_ourprice"),
-      $(".a-price.a-text-price span.a-offscreen"),
-      $("#listPrice")
-    );
+    // Navigate to the specified URL
+    await page.goto(url, { waitUntil: "networkidle2" });
 
-    const outOfStock =
-      $("#availability span").text().trim().toLowerCase() || "out of stock";
+    // Get the HTML content of the page
+    const htmlContent = await page.content();
 
-    const images =
-      $("#imgBlkFront").attr("data-a-dynamic-image") ||
-      $("#landingImage").attr("data-a-dynamic-image") ||
-      "{}";
-    const imageUrls = Object.keys(JSON.parse(images));
-    const currency = extractCurrency($(".a-price-symbol"));
-    const description = extractDescription($);
-    const discountRate = $(".savingsPercentage").text().replace(/[-%]/g, "");
+    // Extracting data logic starts here
+    let index = 0;
+    const csvContent = ""; // Replace with your CSV content
 
-    // construct data object
-    const isOutOfStock = outOfStock === "in stock" ? false : true;
-    const data = {
-      url,
-      title,
-      currency: currency || "$",
-      image: imageUrls[0],
-      currentPrice: Number(currency) || Number(originalPrice),
-      originalPrice: Number(originalPrice) || Number(currentPrice),
-      priceHistory: [],
-      discountRate: Number(discountRate),
-      category: "category",
-      reviewCount: 100,
-      stars: 4.5,
-      isOutOfStock,
-      description,
-      lowestPrice: Number(currentPrice) || Number(originalPrice),
-      highestPrice: Number(originalPrice) || Number(currentPrice),
-      averagePrice: Number(currentPrice) || Number(originalPrice),
+    // Split CSV content into rows
+    const csvRows = csvContent.split("\r\n");
+
+    for (const row of csvRows) {
+      // Extracting data from CSV row
+      const split = row.split(",");
+      const storeName = split[1];
+      const storeType = split[2];
+      const storeAddress = split[6];
+
+      if (storeType === "20") {
+        continue;
+      }
+
+      console.log(storeName + " " + storeAddress);
+
+      const searchName = storeName + " " + storeAddress;
+
+      // Run Puppeteer logic for each entry
+      if (index > 1) {
+        // Extract store data using Puppeteer and Cheerio
+        const restaurantData = await processStoreData(searchName, htmlContent);
+        console.log(restaurantData); // Adjust as needed
+      }
+
+      index++;
+    }
+    // Extracting data logic ends here
+
+    // Close the Puppeteer browser
+    await browser.close();
+
+    // Return any relevant data
+    return {};
+  } catch (error: any) {
+    // Handle errors
+    throw new Error(`Failed to scrape the product ${error.message}`);
+  }
+}
+
+async function processStoreData(searchName: string, htmlContent: any) {
+  // Use Cheerio to load the HTML content
+  const $ = cheerio.load(htmlContent);
+  try {
+    const restaurantData = {
+      name: $(".name-selector").text().trim(),
+      // Add more data extraction logic here
     };
 
-    return data;
+    return restaurantData;
   } catch (error: any) {
-    throw new Error(`Failed to scrape the product ${error.message}`);
+    console.error(
+      `Error processing store data for ${searchName}: ${error.message}`
+    );
+    return {}; // Return an empty object or handle the error as needed
   }
 }
