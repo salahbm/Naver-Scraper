@@ -1,78 +1,115 @@
+"use server";
 import puppeteer from "puppeteer";
-import cheerio from "cheerio";
 
-export async function scrapeNaverData(url: string) {
-  if (!url) return;
+// Function to wait for a specified number of seconds
+function wait(sec: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, sec * 1000));
+}
+
+// Function to extract menu information using Cheerio
+async function getMenu(
+  nameClass: string,
+  priceClass: string,
+  ul: any
+): Promise<any[]> {
+  const arr = [];
+  const allName = await ul.$$(nameClass);
+  const allPrice = await ul.$$(priceClass);
+
+  for (let i = 0; i < allName.length; i++) {
+    const name = await allName[i].evaluate((n: any) => n.innerText);
+    const price = await allPrice[i].evaluate((p: any) => p.innerText);
+    arr.push({
+      name,
+      price,
+    });
+  }
+
+  return arr;
+}
+
+export async function scrapeNaverData(searchName: string): Promise<void> {
+  if (!searchName) return;
+
+  // Puppeteer and Cheerio logic
+  const result: any = {};
+  let menu: any[] = [];
 
   try {
-    // Launch Puppeteer and create a new page
-    const browser = await puppeteer.launch();
+    const browser = await puppeteer.launch({
+      headless: false, // Set to true for headless mode
+    });
+
     const page = await browser.newPage();
+    await page.setViewport({
+      width: 1000,
+      height: 10000,
+    });
+    await page.goto("https://map.naver.com/v5/search/" + searchName);
 
-    // Navigate to the specified URL
-    await page.goto(url, { waitUntil: "networkidle2" });
+    // Wait for 1 second
+    await wait(1);
 
-    // Get the HTML content of the page
-    const htmlContent = await page.content();
+    let frame: any;
 
-    // Extracting data logic starts here
-    let index = 0;
-    const csvContent = ""; // Replace with your CSV content
+    // Set up a timer to close the browser if there are no search results
+    const timer = setTimeout(() => {
+      browser.close();
+    }, 5000);
 
-    // Split CSV content into rows
-    const csvRows = csvContent.split("\r\n");
-
-    for (const row of csvRows) {
-      // Extracting data from CSV row
-      const split = row.split(",");
-      const storeName = split[1];
-      const storeType = split[2];
-      const storeAddress = split[6];
-
-      if (storeType === "20") {
-        continue;
-      }
-
-      console.log(storeName + " " + storeAddress);
-
-      const searchName = storeName + " " + storeAddress;
-
-      // Run Puppeteer logic for each entry
-      if (index > 1) {
-        // Extract store data using Puppeteer and Cheerio
-        const restaurantData = await processStoreData(searchName, htmlContent);
-        console.log(restaurantData); // Adjust as needed
-      }
-
-      index++;
+    // Check if there are search results
+    try {
+      frame = await page.waitForSelector('iframe[name="entryIframe"]');
+      clearTimeout(timer);
+    } catch {
+      console.log(searchName + " No search results found.");
+      result[searchName] = [];
+      return;
     }
-    // Extracting data logic ends here
 
-    // Close the Puppeteer browser
-    await browser.close();
+    // Wait for 1 second
+    await wait(1);
 
-    // Return any relevant data
-    return {};
+    // Check if there is menu information
+    const menuBtn = await frame.$eval(
+      ".flicking-camera > a:nth-child(2) > span",
+      (el: any) => el.innerText
+    );
+    if (menuBtn !== "메뉴") {
+      console.log("No 'Menu' button found.");
+      result[searchName] = [];
+      browser.close();
+      return;
+    }
+
+    // Click on the 'Menu' button
+    await frame.click(".flicking-camera > a:nth-child(2)");
+
+    // Click on the 'See More' button if available
+    try {
+      await frame.click(
+        "#app-root > div > div > div > div:nth-child(7) > div > div.place_section.no_margin > div.lfH3O > a"
+      );
+    } catch (error) {
+      console.log('No "See More" button found.');
+      let ul;
+
+      // Handle the case where the menu information is in a different class for places that support ordering on Naver
+      try {
+        ul = await frame.waitForSelector(".ZUYk_");
+        menu = await getMenu(".Sqg65", ".SSaNE", ul);
+      } catch (error) {
+        ul = await frame.waitForSelector(".list_place_col1");
+        menu = await getMenu(".name", ".price", ul);
+      }
+    }
+
+    // Close the browser
+    browser.close();
+    result[searchName] = menu;
+    console.log(result);
   } catch (error: any) {
     // Handle errors
     throw new Error(`Failed to scrape the product ${error.message}`);
-  }
-}
-
-async function processStoreData(searchName: string, htmlContent: any) {
-  // Use Cheerio to load the HTML content
-  const $ = cheerio.load(htmlContent);
-  try {
-    const restaurantData = {
-      name: $(".name-selector").text().trim(),
-      // Add more data extraction logic here
-    };
-
-    return restaurantData;
-  } catch (error: any) {
-    console.error(
-      `Error processing store data for ${searchName}: ${error.message}`
-    );
-    return {}; // Return an empty object or handle the error as needed
   }
 }

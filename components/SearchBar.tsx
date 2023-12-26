@@ -2,20 +2,23 @@
 import { scrapeAndStoreProduct } from "@/lib/actions";
 import React, { FormEvent, useState } from "react";
 
-const isValidNaverProductUrl = (url: string) => {
+const isValidNaverProductUrl = (searchName: string): boolean => {
   try {
-    const parseUrl = new URL(url);
-    const hostName = parseUrl.hostname;
-    // check if hostname contains Naver link
-    if (
-      hostName.includes("naver.com") ||
-      hostName.includes("map.naver.") ||
-      hostName.endsWith("naver")
-    ) {
-      return true;
-    }
+    // Extract the path from the searchName
+
+    // Split the path into words based on '/'
+    const words = searchName
+      .split(" ")
+      .filter((word: any) => word.trim() !== "");
+
+    // Check if the number of words is more than 2
+    const isValid = words.length >= 2;
+    console.log(`file: SearchBar.tsx:15 ~ isValid:`, isValid);
+
+    return isValid;
   } catch (error) {
-    console.log(error);
+    console.error(error);
+    return false;
   }
 };
 
@@ -27,7 +30,7 @@ const SearchBar = () => {
     const isValidLink = isValidNaverProductUrl(searchPrompt);
     if (!isValidLink)
       return alert(
-        "This works with only Naver  links, Please provide valid link"
+        "Please provide Restaurant name and location, EX: '써브웨이 낙성대점'"
       );
     // Scrap the product
     try {

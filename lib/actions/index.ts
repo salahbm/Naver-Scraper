@@ -1,10 +1,8 @@
 "use server";
-
 import { revalidatePath } from "next/cache";
 import { connectDB } from "../database/mongoose";
 import Product from "../model/product.model";
 import { scrapeNaverData } from "../scraper";
-import { getAveragePrice, getHighestPrice, getLowestPrice } from "../utils";
 import { User } from "@/types";
 import { generateEmailBody, sendEmail } from "../nodemailer";
 
@@ -14,9 +12,9 @@ export async function scrapeAndStoreProduct(restaurantUrl: string) {
   try {
     // connectDB();
 
-    const scrapedProduct = await scrapeNaverData(restaurantUrl);
+    await scrapeNaverData(restaurantUrl);
 
-    if (!scrapedProduct) return;
+    // if (!scrapedProduct) return;
 
     // let product = scrapedProduct;
 
