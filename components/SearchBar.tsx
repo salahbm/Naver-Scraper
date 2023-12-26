@@ -1,44 +1,41 @@
 "use client";
 import { scrapeAndStoreProduct } from "@/lib/actions";
-import navigateNaverMap from "@/lib/selenium";
+import navigateAndGetNaverData from "@/lib/selenium";
 import React, { FormEvent, useState } from "react";
 
-// const isValidAmazonProductUrl = (url: string) => {
-//   try {
-//     const parseUrl = new URL(url);
-//     const hostName = parseUrl.hostname;
-//     // check if hostname contains amazon link
-//     if (
-//       hostName.includes("amazon.com") ||
-//       hostName.includes("amazon.") ||
-//       hostName.endsWith("amazon")
-//     ) {
-//       return true;
-//     }
-//   } catch (error) {
-//     console.log(error);
-//   }
-// };
+const isValidNaverProductUrl = (url: string) => {
+  try {
+    const parseUrl = new URL(url);
+    const hostName = parseUrl.hostname;
+    // check if hostname contains Naver link
+    if (
+      hostName.includes("naver.com") ||
+      hostName.includes("naver.") ||
+      hostName.endsWith("naver")
+    ) {
+      return true;
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 const SearchBar = () => {
   const [searchPrompt, setSearchPrompt] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // const isValidLink = isValidAmazonProductUrl(searchPrompt);
-    // if (!isValidLink)
-    //   return alert(
-    //     "This works with only Amazon Market links, Please provide valid link"
-    //   );
+    const isValidLink = isValidNaverProductUrl(searchPrompt);
+    if (!isValidLink)
+      return alert(
+        "This works with only Naver  links, Please provide valid link"
+      );
     // Scrap the product
     try {
       setIsLoading(true);
 
-      const getSearchPromptUrl = await navigateNaverMap(searchPrompt);
-      console.log(
-        `file: SearchBar.tsx:38 ~ getSearchPromptUrl:`,
-        getSearchPromptUrl
-      );
+      const getSearchPromptUrl = await navigateAndGetNaverData(searchPrompt);
+
       // await scrapeAndStoreProduct(searchPrompt);
     } catch (error) {
       console.log(error);
