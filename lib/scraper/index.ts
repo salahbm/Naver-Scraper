@@ -91,9 +91,23 @@ export async function scrapeNaverData(searchName: string): Promise<void> {
   }
 
   // Extract menu data
-  const menu = await getMenu(".VQvNX", ".gl2cc", handleMenu);
+  const menu = await getMenu(
+    ".VQvNX",
+    ".gl2cc",
+    ".place_thumb img",
+    handleMenu
+  );
 
+  // get Logo
+  await frame.click(".flicking-camera > a:nth-child(4)");
+  const logoSelector = ".wzrbN a.place_thumb img#업체_0";
+  const handleLogo = await frame.waitForSelector(logoSelector);
+  const logo = await frame.evaluate(
+    (img: any) => img.getAttribute("src"),
+    handleLogo
+  );
   const data: any = {
+    logo,
     name,
     category,
     result,
@@ -118,19 +132,24 @@ async function wait(sec: number) {
 async function getMenu(
   nameClass: string,
   priceClass: string,
+  imgClass: string,
   ul: any
 ): Promise<any[]> {
   const arr: any[] = [];
 
   const allName = await ul.$$(nameClass);
   const allPrice = await ul.$$(priceClass);
+  const allImages = await ul.$$(imgClass);
 
   for (const elementHandle of allName) {
     const name = await elementHandle.evaluate((n: any) => n.innerText);
     const priceElementHandle = allPrice[allName.indexOf(elementHandle)];
-
+    const imgElementHandle = allImages[allName.indexOf(elementHandle)];
+    const imageUrl = await imgElementHandle.evaluate((img: any) =>
+      img.getAttribute("src")
+    );
     const price = await priceElementHandle.evaluate((p: any) => p.innerText);
-    arr.push({ name, price });
+    arr.push({ name, price, imageUrl });
   }
 
   return arr;
