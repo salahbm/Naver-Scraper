@@ -6,14 +6,12 @@ const isValidNaverProductUrl = (searchName: string): boolean => {
   try {
     // Extract the path from the searchName
 
-    // Split the path into words based on '/'
     const words = searchName
       .split(" ")
       .filter((word: any) => word.trim() !== "");
 
     // Check if the number of words is more than 2
     const isValid = words.length >= 2;
-    console.log(`file: SearchBar.tsx:15 ~ isValid:`, isValid);
 
     return isValid;
   } catch (error) {
