@@ -129,13 +129,3 @@ export async function scrapeAndStoreProduct(restaurantUrl: string) {
 //     console.log(error);
 //   }
 // }
-
-// utils/fetchLocalData.ts
-const fetchLocalData = async (phone: any) => {
-  const storedData: RestaurantData[] = await JSON.parse(
-    localStorage.getItem("storedData") || "[]"
-  );
-  return storedData.find((data) => data.phone === phone) || null;
-};
-
-export default fetchLocalData;

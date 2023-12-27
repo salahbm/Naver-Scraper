@@ -1,6 +1,5 @@
 "use client";
 import RestaurantCard from "@/components/RestaurantCard";
-import ProductCard from "@/components/RestaurantCard";
 import SearchBar from "@/components/SearchBar";
 import Image from "next/image";
 import { useEffect, useState } from "react";
@@ -53,8 +52,8 @@ const Home = () => {
         <h2 className="section-text">Searched Restaurants</h2>
 
         <div className="flex flex-wrap gap-x-8 gap-y-16">
-          {restaurants?.map((product) => (
-            <RestaurantCard data={product} />
+          {restaurants?.map((product, index) => (
+            <RestaurantCard data={product} key={index} />
           ))}
         </div>
       </section>

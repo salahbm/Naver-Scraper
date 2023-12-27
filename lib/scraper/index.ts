@@ -30,7 +30,6 @@ export async function scrapeNaverData(searchName: string): Promise<any> {
     clearTimeout(timer);
   } catch {
     console.log(searchName + " iframe not found.");
-    result[searchName] = [];
     browser.close();
     return;
   }
@@ -61,7 +60,11 @@ export async function scrapeNaverData(searchName: string): Promise<any> {
     handleAddress
   );
   const phone = await frame.evaluate((el: any) => el.innerText, handlePhone);
-  if (!handleSocials) throw new Error("No Socials Link");
+  if (!handleSocials) {
+    console.log("No Socials Link");
+    browser.close();
+    return;
+  }
 
   const socialLinks = await frame.evaluate((element: HTMLBodyElement) => {
     const links = Array.from(element.querySelectorAll("a"));
@@ -75,24 +78,26 @@ export async function scrapeNaverData(searchName: string): Promise<any> {
   );
   if (menuBtn !== "메뉴") {
     console.log("no menu btn.");
-    result[searchName] = [];
     browser.close();
     return;
   }
 
   // Click on the 'Menu' button
   await frame.click(".flicking-camera > a:nth-child(2)");
+
   // Wait for the menu container to be present
   const handleMenu = await frame.waitForSelector(
     "#app-root > div > div > div > div:nth-child(6) > div > div:nth-child(2) > div > ul" ||
       "#app-root > div > div > div > div:nth-child(6) > div:nth-child(2) > div.place_section.no_margin > div > ul"
   );
+
   if (!handleMenu) {
-    throw new Error("No Menu List");
+    console.log("No Menu List");
+    browser.close();
+    return;
   }
 
   // Extract menu data
-
   const menu = await getMenu(
     ".VQvNX",
     ".gl2cc",
@@ -112,7 +117,6 @@ export async function scrapeNaverData(searchName: string): Promise<any> {
     logo,
     name,
     category,
-    result,
     address,
     phone,
     socialLinks,
