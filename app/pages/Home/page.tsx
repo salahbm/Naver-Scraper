@@ -1,8 +1,29 @@
+"use client";
+import RestaurantCard from "@/components/RestaurantCard";
+import ProductCard from "@/components/RestaurantCard";
 import SearchBar from "@/components/SearchBar";
 import Image from "next/image";
+import { useEffect, useState } from "react";
 
-const Home = async () => {
-  // const allProducts = await getAllProducts();
+const Home = () => {
+  const [restaurants, setRestaurants] = useState([]);
+  console.log(`file: page.tsx:10 ~ restaurants:`, restaurants);
+
+  useEffect(() => {
+    const fetchData = () => {
+      try {
+        const storedData = JSON.parse(
+          localStorage.getItem("storedData") || "[]"
+        );
+
+        setRestaurants(storedData);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   return (
     <>
@@ -33,9 +54,9 @@ const Home = async () => {
         <h2 className="section-text">Searched Restaurants</h2>
 
         <div className="flex flex-wrap gap-x-8 gap-y-16">
-          {/* {getRestaurantData?.map((product) => (
-            // <ProductCard key={product.} product={product} />
-          ))} */}
+          {restaurants?.map((product) => (
+            <RestaurantCard data={product} />
+          ))}
         </div>
       </section>
     </>

@@ -3,7 +3,7 @@ import puppeteer from "puppeteer";
 
 const result: any = {};
 
-export async function scrapeNaverData(searchName: string): Promise<void> {
+export async function scrapeNaverData(searchName: string): Promise<any> {
   const browser = await puppeteer.launch({ headless: false });
   const page = await browser.newPage();
   await page.setViewport({ width: 1000, height: 10000 });
@@ -75,8 +75,6 @@ export async function scrapeNaverData(searchName: string): Promise<void> {
   } catch (error) {
     console.error("Error extracting restaurant info:", error);
   }
-
-  // Continue with the rest of the code...
 
   // handle menu
   let menu = [];

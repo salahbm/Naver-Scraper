@@ -1,4 +1,17 @@
+"use client";
+import { useEffect, useState } from "react";
 import { scrapeNaverData } from "../scraper";
+
+interface RestaurantData {
+  logo: string;
+  name: string;
+  category: string;
+  address: string;
+  phone: string;
+  result: any; // Update with the actual type
+  socialLinks: string[];
+  menu: any[]; // Update with the actual type
+}
 
 export async function scrapeAndStoreProduct(restaurantUrl: string) {
   if (!restaurantUrl) return;
@@ -6,20 +19,25 @@ export async function scrapeAndStoreProduct(restaurantUrl: string) {
   try {
     // connectDB();
 
-    // Retrieve existing data from local storage
-    const existingData: any[] = JSON.parse(
+    const existingData: RestaurantData[] = JSON.parse(
       localStorage.getItem("storedData") || "[]"
     );
 
-    // Get new data
     const scrapeData = await scrapeNaverData(restaurantUrl);
 
-    // Add new data to the array
-    existingData.push(scrapeData);
-    console.log(`file: index.ts:19 ~ existingData:`, existingData);
+    const isExistingData = existingData.find(
+      (data) => data.phone.trim() === scrapeData.phone.trim()
+    );
 
-    // Save the updated array back to local storage
-    localStorage.setItem("storedData", JSON.stringify(existingData));
+    if (!isExistingData) {
+      // Add new data to the array
+      existingData.push(scrapeData);
+
+      // Save the updated array back to local storage
+      localStorage.setItem("storedData", JSON.stringify(existingData));
+    } else {
+      console.log(`Data for ${scrapeData.name} already exists. Not saving.`);
+    }
 
     // const existingProduct = await Product.findOne({ url: scrapeData.url });
 
@@ -113,3 +131,13 @@ export async function scrapeAndStoreProduct(restaurantUrl: string) {
 //     console.log(error);
 //   }
 // }
+
+export async function fetchLocal() {
+  try {
+    const storedData = JSON.parse(localStorage.getItem("storedData") || "[]");
+    return storedData;
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    return [];
+  }
+}
