@@ -48,71 +48,108 @@ export async function scrapeNaverData(searchName: string): Promise<any> {
   const handleSocials = await frame.$(
     "#app-root > div > div > div > div:nth-child(5) > div > div:nth-child(2) > div.place_section_content > div > div.O8qbU.yIPfO > div > div"
   );
+  const handleVisitorsReview = await frame.$(
+    "#app-root > div > div > div > div.place_section.no_margin.OP4V8 > div.zD5Nm.undefined > div.dAsGb > span:nth-child(1) > a"
+  );
+  const handleBLogReview = await frame.$(
+    "#app-root > div > div > div > div.place_section.no_margin.OP4V8 > div.zD5Nm.undefined > div.dAsGb > span:nth-child(2) > a"
+  );
 
   // Extract text content from the element handles
-  const name = await frame.evaluate((el: any) => el.innerText, handleName);
-  const category = await frame.evaluate(
-    (el: any) => el.innerText,
-    handleCategory
-  );
-  const address = await frame.evaluate(
-    (el: any) => el.innerText,
-    handleAddress
-  );
-  const phone = await frame.evaluate((el: any) => el.innerText, handlePhone);
+  const name = handleName
+    ? await frame.evaluate((el: any) => el.innerText, handleName)
+    : "not available";
+
+  const category = handleCategory
+    ? await frame.evaluate((el: any) => el.innerText, handleCategory)
+    : "not available";
+
+  const address = handleAddress
+    ? await frame.evaluate((el: any) => el.innerText, handleAddress)
+    : "not available";
+
+  const phone = handlePhone
+    ? await frame.evaluate((el: any) => el.innerText, handlePhone)
+    : "not available";
+
+  // Check if handleVisitorsReview exists before trying to use it
+  const visitorsReview = handleVisitorsReview
+    ? await frame.evaluate((el: any) => el.innerText, handleVisitorsReview)
+    : "not available";
+
+  // Check if handleBLogReview exists before trying to use it
+  const blogReview = handleBLogReview
+    ? await frame.evaluate((el: any) => el.innerText, handleBLogReview)
+    : "not available";
+
   if (!handleSocials) {
     console.log("No Socials Link");
-    browser.close();
-    return;
   }
 
-  const socialLinks = await frame.evaluate((element: HTMLBodyElement) => {
-    const links = Array.from(element.querySelectorAll("a"));
-    return links.map((link: any) => link.href);
-  }, handleSocials);
+  const socialLinks = handleSocials
+    ? await frame.evaluate((element: HTMLBodyElement) => {
+        const links = Array.from(element.querySelectorAll("a"));
+        return links.map((link: any) => link.href);
+      }, handleSocials)
+    : ["not available"];
 
   // Check if there is menu information
   const menuBtn = await frame.$eval(
     ".flicking-camera > a:nth-child(2) > span",
     (el: any) => el.innerText
   );
+  let menu;
   if (menuBtn !== "메뉴") {
     console.log("no menu btn.");
-    browser.close();
-    return;
+    menu = "not available";
+  } else {
+    // Click on the 'Menu' button
+    await frame.click(".flicking-camera > a:nth-child(2)");
+
+    // Wait for the menu container to be present
+    const handleMenu = await frame.waitForSelector(
+      "#app-root > div > div > div > div:nth-child(6) > div > div:nth-child(2) > div > ul" ||
+        "#app-root > div > div > div > div:nth-child(6) > div:nth-child(2) > div.place_section.no_margin > div > ul"
+    );
+
+    if (!handleMenu) {
+      console.log("No Menu List");
+      menu = "not available";
+    } else {
+      // Extract menu data
+      menu = handleMenu
+        ? await getMenu(".VQvNX", ".gl2cc", ".place_thumb img", handleMenu)
+        : ["not available"];
+    }
   }
-
-  // Click on the 'Menu' button
-  await frame.click(".flicking-camera > a:nth-child(2)");
-
-  // Wait for the menu container to be present
-  const handleMenu = await frame.waitForSelector(
-    "#app-root > div > div > div > div:nth-child(6) > div > div:nth-child(2) > div > ul" ||
-      "#app-root > div > div > div > div:nth-child(6) > div:nth-child(2) > div.place_section.no_margin > div > ul"
-  );
-
-  if (!handleMenu) {
-    console.log("No Menu List");
-    browser.close();
-    return;
-  }
-
-  // Extract menu data
-  const menu = await getMenu(
-    ".VQvNX",
-    ".gl2cc",
-    ".place_thumb img",
-    handleMenu
-  );
 
   // get Logo
-  await frame.click(".flicking-camera > a:nth-child(4)");
-  const logoSelector = ".wzrbN a.place_thumb img#업체_0";
-  const handleLogo = await frame.waitForSelector(logoSelector);
-  const logo = await frame.evaluate(
-    (img: any) => img.getAttribute("src"),
-    handleLogo
+  let logo;
+  let logoBtn = await frame.$eval(
+    ".flicking-camera > a:nth-child(4) > span",
+    (el: any) => el.innerText
   );
+
+  if (logoBtn === "사진") {
+    // Click on the fourth child (in this case) of .flicking-camera
+    await frame.click(".flicking-camera > a:nth-child(4)");
+  } else {
+    // Click on the fifth child (in this case) of .flicking-camera
+    await frame.click(".flicking-camera > a:nth-child(5)");
+  }
+
+  const logoSelector = "#업체_0";
+  const handleLogo = await frame.waitForSelector(logoSelector);
+
+  // Check if handleLogo exists before trying to use it
+  logo = handleLogo
+    ? await frame.evaluate((img: any) => img.getAttribute("src"), handleLogo)
+    : "not available";
+
+  if (logo === "not available") {
+    console.log("No suitable logo button found.");
+  }
+
   const data: any = {
     logo,
     name,
@@ -121,6 +158,8 @@ export async function scrapeNaverData(searchName: string): Promise<any> {
     phone,
     socialLinks,
     menu,
+    visitorsReview,
+    blogReview,
   };
 
   browser.close();
