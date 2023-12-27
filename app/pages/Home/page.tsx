@@ -7,7 +7,6 @@ import { useEffect, useState } from "react";
 
 const Home = () => {
   const [restaurants, setRestaurants] = useState([]);
-  console.log(`file: page.tsx:10 ~ restaurants:`, restaurants);
 
   useEffect(() => {
     const fetchData = () => {

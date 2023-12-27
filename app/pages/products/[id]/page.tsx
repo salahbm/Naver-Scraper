@@ -1,51 +1,67 @@
-import Image from "next/image";
-import Link from "next/link";
+import { redirect, useSearchParams } from "next/navigation";
+import fetchLocalData from "@/lib/actions";
 
-const ProductDetails = async (data: any) => {
-  const { logo, name, category, address, phone, socialLinks, menu } = data;
+type Props = {
+  params: { id: string };
+};
+
+const ProductDetails = () => {
+  const getPhone = useSearchParams();
+  const phone = getPhone.get("data");
+  const product: any = fetchLocalData(phone);
+
+  if (!product) redirect("/");
 
   return (
-    <div className="container mx-auto my-8">
-      <div className="flex items-center justify-center">
-        <div className="mr-8">
-          <Image src={logo} alt={`${name} Logo`} width={200} height={200} />
-        </div>
-        <div>
-          <h1 className="text-4xl font-bold">{name}</h1>
-          <p className="text-lg">{category}</p>
-          <p className="text-gray-600">{address}</p>
-          <p className="text-gray-600">{phone}</p>
-          <div className="mt-4">
-            {socialLinks?.map((link: URL, index: number) => (
-              <Link key={index} href={link}>
+    <div className="max-w-lg mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
+      <img
+        className="w-full h-64 object-cover object-center"
+        src={product?.logo}
+        alt={product?.name}
+      />
+      <div className="p-4">
+        <h2 className="text-2xl font-semibold text-gray-800">
+          {product?.name}
+        </h2>
+        <p className="text-sm text-gray-600">{product?.category}</p>
+        <p className="text-gray-700">{product?.address}</p>
+        <p className="text-gray-700">{product?.phone}</p>
+
+        <div className="mt-4">
+          <h3 className="text-lg font-semibold mb-2">Social Links:</h3>
+          <ul>
+            {product?.socialLinks.map((link: any, index: number) => (
+              <li key={index}>
                 <a
-                  className="mr-4 text-blue-500"
+                  href={link}
                   target="_blank"
                   rel="noopener noreferrer"
+                  className="text-blue-500 hover:underline"
                 >
-                  {`Social Link ${index + 1}`}
+                  {link}
                 </a>
-              </Link>
+              </li>
             ))}
-          </div>
+          </ul>
         </div>
-      </div>
 
-      <div className="my-8">
-        <h2 className="text-2xl font-bold mb-4">Menu</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {menu?.map((item: any, index: number) => (
-            <div key={index} className="bg-white p-4 rounded-lg shadow">
-              <Image
-                src={item.imageUrl}
-                alt={item.name}
-                width={320}
-                height={320}
-              />
-              <h3 className="text-lg font-semibold mt-2">{item.name}</h3>
-              <p className="text-gray-600">{item.price}</p>
-            </div>
-          ))}
+        <div className="mt-4">
+          <h3 className="text-lg font-semibold mb-2">Menu:</h3>
+          <ul>
+            {product?.menu.map((item: any, index: number) => (
+              <li key={index} className="flex items-center justify-between">
+                <div>
+                  <p className="text-gray-800">{item.name}</p>
+                  <p className="text-gray-600">{item.price}</p>
+                </div>
+                <img
+                  className="w-16 h-16 object-cover"
+                  src={item.imageUrl}
+                  alt={item.name}
+                />
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
     </div>

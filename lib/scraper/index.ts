@@ -38,102 +38,76 @@ export async function scrapeNaverData(searchName: string): Promise<any> {
   wait(1);
 
   // handle restaurant info
-  let name = "";
-  let category = "";
-  let address = "";
-  let phone = "";
-  let socialLinks = [];
+  const handleName = await frame.$("#_title > div > span.Fc1rA");
+  const handleCategory = await frame.$("#_title > div > span.DJJvD");
+  const handleAddress = await frame.$(
+    "#app-root > div > div > div > div:nth-child(5) > div > div:nth-child(2) > div.place_section_content > div > div.O8qbU.tQY7D > div > a > span.LDgIH"
+  );
+  const handlePhone = await frame.$(
+    "#app-root > div > div > div > div:nth-child(5) > div > div:nth-child(2) > div.place_section_content > div > div.O8qbU.nbXkr > div > span.xlx7Q"
+  );
+  const handleSocials = await frame.$(
+    "#app-root > div > div > div > div:nth-child(5) > div > div:nth-child(2) > div.place_section_content > div > div.O8qbU.yIPfO > div > div"
+  );
 
-  try {
-    const handleName = await frame.$("#_title > div > span.Fc1rA");
-    name = await frame.evaluate((el: any) => el.innerText, handleName);
+  // Extract text content from the element handles
+  const name = await frame.evaluate((el: any) => el.innerText, handleName);
+  const category = await frame.evaluate(
+    (el: any) => el.innerText,
+    handleCategory
+  );
+  const address = await frame.evaluate(
+    (el: any) => el.innerText,
+    handleAddress
+  );
+  const phone = await frame.evaluate((el: any) => el.innerText, handlePhone);
+  if (!handleSocials) throw new Error("No Socials Link");
 
-    const handleCategory = await frame.$("#_title > div > span.DJJvD");
-    category = await frame.evaluate((el: any) => el.innerText, handleCategory);
+  const socialLinks = await frame.evaluate((element: HTMLBodyElement) => {
+    const links = Array.from(element.querySelectorAll("a"));
+    return links.map((link: any) => link.href);
+  }, handleSocials);
 
-    const handleAddress = await frame.$(
-      "#app-root > div > div > div > div:nth-child(5) > div > div:nth-child(2) > div.place_section_content > div > div.O8qbU.tQY7D > div > a > span.LDgIH"
-    );
-    address = await frame.evaluate((el: any) => el.innerText, handleAddress);
-
-    const handlePhone = await frame.$(
-      "#app-root > div > div > div > div:nth-child(5) > div > div:nth-child(2) > div.place_section_content > div > div.O8qbU.nbXkr > div > span.xlx7Q"
-    );
-    phone = await frame.evaluate((el: any) => el.innerText, handlePhone);
-
-    const handleSocials = await frame.$(
-      "#app-root > div > div > div > div:nth-child(5) > div > div:nth-child(2) > div.place_section_content > div > div.O8qbU.yIPfO > div > div"
-    );
-    if (handleSocials) {
-      socialLinks = await frame.evaluate((element: HTMLBodyElement) => {
-        const links = Array.from(element.querySelectorAll("a"));
-        return links.map((link: any) => link.href);
-      }, handleSocials);
-    } else {
-      console.warn("No Socials Link found.");
-    }
-  } catch (error) {
-    console.error("Error extracting restaurant info:", error);
+  // Check if there is menu information
+  const menuBtn = await frame.$eval(
+    ".flicking-camera > a:nth-child(2) > span",
+    (el: any) => el.innerText
+  );
+  if (menuBtn !== "메뉴") {
+    console.log("no menu btn.");
+    result[searchName] = [];
+    browser.close();
+    return;
   }
 
-  // handle menu
-  let menu = [];
-
-  try {
-    // Check if there is menu information
-    const menuBtn = await frame.$eval(
-      ".flicking-camera > a:nth-child(2) > span",
-      (el: any) => el.innerText
-    );
-
-    if (menuBtn === "메뉴") {
-      // Click on the 'Menu' button
-      await frame.click(".flicking-camera > a:nth-child(2)");
-
-      // Wait for the menu container to be present
-      const handleMenu = await frame.waitForSelector(
-        "#app-root > div > div > div > div:nth-child(6) > div > div:nth-child(2) > div > ul" ||
-          "#app-root > div > div > div > div:nth-child(6) > div:nth-child(2) > div.place_section.no_margin > div > ul"
-      );
-
-      if (handleMenu) {
-        // Extract menu data
-        menu = await getMenu(
-          ".VQvNX",
-          ".gl2cc",
-          ".place_thumb img",
-          handleMenu
-        );
-      } else {
-        console.warn("No Menu List");
-      }
-    } else {
-      console.log("No menu btn.");
-    }
-  } catch (error) {
-    console.error("Error extracting menu:", error);
+  // Click on the 'Menu' button
+  await frame.click(".flicking-camera > a:nth-child(2)");
+  // Wait for the menu container to be present
+  const handleMenu = await frame.waitForSelector(
+    "#app-root > div > div > div > div:nth-child(6) > div > div:nth-child(2) > div > ul" ||
+      "#app-root > div > div > div > div:nth-child(6) > div:nth-child(2) > div.place_section.no_margin > div > ul"
+  );
+  if (!handleMenu) {
+    throw new Error("No Menu List");
   }
 
-  // handle logo
-  let logo = "";
+  // Extract menu data
 
-  try {
-    await frame.click(".flicking-camera > a:nth-child(4)");
-    const logoSelector = ".wzrbN a.place_thumb img#업체_0";
-    const handleLogo = await frame.waitForSelector(logoSelector);
+  const menu = await getMenu(
+    ".VQvNX",
+    ".gl2cc",
+    ".place_thumb img",
+    handleMenu
+  );
 
-    if (handleLogo) {
-      logo = await frame.evaluate(
-        (img: any) => img.getAttribute("src"),
-        handleLogo
-      );
-    } else {
-      console.warn("No logo found");
-    }
-  } catch (error) {
-    console.error("Error extracting logo:", error);
-  }
-
+  // get Logo
+  await frame.click(".flicking-camera > a:nth-child(4)");
+  const logoSelector = ".wzrbN a.place_thumb img#업체_0";
+  const handleLogo = await frame.waitForSelector(logoSelector);
+  const logo = await frame.evaluate(
+    (img: any) => img.getAttribute("src"),
+    handleLogo
+  );
   const data: any = {
     logo,
     name,

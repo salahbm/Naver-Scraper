@@ -1,5 +1,3 @@
-"use client";
-import { useEffect, useState } from "react";
 import { scrapeNaverData } from "../scraper";
 
 interface RestaurantData {
@@ -132,12 +130,12 @@ export async function scrapeAndStoreProduct(restaurantUrl: string) {
 //   }
 // }
 
-export async function fetchLocal() {
-  try {
-    const storedData = JSON.parse(localStorage.getItem("storedData") || "[]");
-    return storedData;
-  } catch (error) {
-    console.error("Error fetching data:", error);
-    return [];
-  }
-}
+// utils/fetchLocalData.ts
+const fetchLocalData = async (phone: any) => {
+  const storedData: RestaurantData[] = await JSON.parse(
+    localStorage.getItem("storedData") || "[]"
+  );
+  return storedData.find((data) => data.phone === phone) || null;
+};
+
+export default fetchLocalData;
