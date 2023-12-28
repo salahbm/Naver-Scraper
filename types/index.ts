@@ -2,8 +2,12 @@ export type PriceHistoryItem = {
   price: number;
 };
 
-export type User = {
+export type UserType = {
   email: string;
+  phoneNumber: string;
+  name: string;
+  password: string;
+  recommendCode?: string;
 };
 
 export type Product = {
@@ -24,7 +28,7 @@ export type Product = {
   reviewsCount: number;
   stars: number;
   isOutOfStock: Boolean;
-  users?: User[];
+  users?: UserType[];
 };
 
 export type NotificationType =

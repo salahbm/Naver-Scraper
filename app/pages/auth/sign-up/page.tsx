@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -16,8 +15,10 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { formSchema } from "@/lib/validation";
+import { saveUsers } from "@/lib/actions";
 
 const SignUp = () => {
+  const [isLoading, setIsLoading] = useState(false);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -25,12 +26,25 @@ const SignUp = () => {
       email: "",
       password: "",
       passwordConfirm: "",
-      number: "",
+      phoneNumber: "",
     },
   });
 
-  const handleSubmit = (values: z.infer<typeof formSchema>) => {
-    console.log({ values });
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    try {
+      // Create a new user
+      setIsLoading(true);
+      console.log("clicked to submit");
+
+      const user = await saveUsers(values);
+      if (user) {
+        console.log(`file: page.tsx:41 ~ user:`, user);
+        setIsLoading(false);
+      }
+      console.log("User created successfully");
+    } catch (error: any) {
+      console.error("Error creating user:", error.message);
+    }
   };
 
   return (
@@ -40,7 +54,7 @@ const SignUp = () => {
           {/* Image */}
           <img src="/assets/images/signUp.svg" className="md:w-1/2" />
           <form
-            onSubmit={form.handleSubmit(handleSubmit)}
+            onSubmit={form.handleSubmit(onSubmit)}
             className="flex flex-col gap-5 w-full mt-2"
           >
             <h2 className="h3-hold md:h2-bold pt-5 sm:pt-8">Log In Account</h2>
@@ -83,7 +97,7 @@ const SignUp = () => {
             />
             <FormField
               control={form.control}
-              name="number"
+              name="phoneNumber"
               render={({ field }: any) => {
                 return (
                   <FormItem>
@@ -142,7 +156,7 @@ const SignUp = () => {
             </p>
 
             <Button type="submit" className="w-full">
-              Submit
+              {isLoading ? "Creating..." : "Submit"}
             </Button>
           </form>
         </div>

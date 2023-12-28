@@ -5,8 +5,9 @@ export const formSchema = z.object({
   email: z.string().email(),
   password: z.string().min(6),
   passwordConfirm: z.string(),
-  number: z
+  phoneNumber: z
     .string()
     .min(10, { message: "Must be a valid mobile number" })
     .max(14, { message: "Must be a valid mobile number" }),
+  recommendCode: z.string(),
 });

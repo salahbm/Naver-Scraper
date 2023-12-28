@@ -1,4 +1,10 @@
+"use server";
+import { UserType } from "@/types";
+import { connectDB } from "../database/mongoose";
 import { scrapeNaverData } from "../scraper";
+import { User } from "../model/user.model";
+import { redirect } from "next/dist/server/api-utils";
+import { revalidatePath } from "next/cache";
 
 interface RestaurantData {
   logo: string;
@@ -60,72 +66,34 @@ export async function scrapeAndStoreProduct(restaurantUrl: string) {
   }
 }
 
-// export async function getProductById(productId: string) {
-//   try {
-//     connectDB();
+export async function saveUsers(users: UserType) {
+  if (!users) return;
+  let newUser;
+  try {
+    await connectDB(); // Connect to the database
 
-//     const product = await Product.findOne({ _id: productId });
+    const existingUser = await User.findOne({ phoneNumber: users.phoneNumber });
 
-//     if (!product) return null;
+    if (existingUser) {
+      console.log("User exists", existingUser);
+      // Handle existing user logic (e.g., redirect)
+    } else {
+      // Create a new user
+      newUser = new User({
+        username: users.name,
+        email: users.email,
+        passwordHash: users.password,
+        phoneNumber: users.phoneNumber,
+        recommendCode: users.recommendCode,
+      });
 
-//     return product;
-//   } catch (error) {
-//     console.log(error);
-//   }
-// }
+      // Save the user to the database
+      await newUser.save();
+      console.log("User created successfully");
+    }
 
-// export async function getAllProducts() {
-//   try {
-//     connectDB();
-//     const products = await Product.find();
-
-//     return products;
-//   } catch (error: any) {
-//     console.log(error.message);
-//   }
-// }
-
-// export async function getSimilarProducts(productId: string) {
-//   try {
-//     connectDB();
-
-//     const currentProduct = await Product.findById(productId);
-
-//     if (!currentProduct) return null;
-
-//     const similarProducts = await Product.find({
-//       _id: { $ne: productId },
-//     }).limit(3);
-
-//     return similarProducts;
-//   } catch (error) {
-//     console.log(error);
-//   }
-// }
-
-// export async function addUserEmailToProduct(
-//   productId: string,
-//   userEmail: string
-// ) {
-//   try {
-//     const product = await Product.findById(productId);
-
-//     if (!product) return;
-
-//     const userExists = product.users.some(
-//       (user: User) => user.email === userEmail
-//     );
-
-//     if (!userExists) {
-//       product.users.push({ email: userEmail });
-
-//       await product.save();
-
-//       const emailContent = await generateEmailBody(product, "WELCOME");
-
-//       await sendEmail(emailContent, [userEmail]);
-//     }
-//   } catch (error) {
-//     console.log(error);
-//   }
-// }
+    return newUser;
+  } catch (error: any) {
+    throw new Error(`Failed to create/update user: ${error.message}`);
+  }
+}
