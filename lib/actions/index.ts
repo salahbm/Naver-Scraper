@@ -3,8 +3,8 @@ import { UserType } from "@/types";
 import { connectDB } from "../database/mongoose";
 import { scrapeNaverData } from "../scraper";
 import { User } from "../model/user.model";
-import { redirect } from "next/dist/server/api-utils";
 import { revalidatePath } from "next/cache";
+import { Store } from "../model/store.model";
 
 interface RestaurantData {
   logo: string;
@@ -21,51 +21,67 @@ export async function scrapeAndStoreProduct(restaurantUrl: string) {
   if (!restaurantUrl) return;
 
   try {
-    // connectDB();
-
-    const existingData: RestaurantData[] = JSON.parse(
-      localStorage.getItem("storedData") || "[]"
-    );
-
+    connectDB();
     const scrapeData = await scrapeNaverData(restaurantUrl);
+    if (!scrapeData) return;
 
-    const isExistingData = existingData.find(
-      (data) => data.phone.trim() === scrapeData.phone.trim()
-    );
+    const existingBrand = await Store.findOne({
+      phoneNumber: scrapeData.phoneNumber,
+    });
 
-    if (!isExistingData) {
-      // Add new data to the array
-      existingData.push(scrapeData);
-
-      // Save the updated array back to local storage
-      localStorage.setItem("storedData", JSON.stringify(existingData));
-    } else {
-      console.log(`Data for ${scrapeData.name} already exists. Not saving.`);
+    if (existingBrand) {
+      console.log("Brand exists");
+      return;
     }
 
-    // const existingProduct = await Product.findOne({ url: scrapeData.url });
+    const blogReview = parseInt(scrapeData.blogReview, 10) || 0;
+    const visitorReview = parseInt(scrapeData.visitorsReview, 10) || 0;
 
-    // if (existingProduct) {
-    //   const updatedPriceHistory: any = [
-    //     ...existingProduct.priceHistory,
+    const socialLinks = scrapeData.socialLinks
+      ? scrapeData.socialLinks.split(",")
+      : [];
 
-    //   ];
+    const newStore = await Store.findOneAndUpdate({
+      storeName: scrapeData.name,
+      address: scrapeData.address,
+      type: scrapeData.category,
+      phoneNumber: scrapeData.phone,
+      blogReview: blogReview,
+      visitorReview: visitorReview,
+      socialLinks: socialLinks,
+    });
 
-    //   product = {
-
-    //   };
-    // }
-
-    // const newProduct = await Product.findOneAndUpdate(
-
-    // );
-
-    // revalidatePath(`/products/${newProduct._id}`);
+    revalidatePath(`/pages/products/${newStore?._id}`);
   } catch (error: any) {
     throw new Error(`Failed to create/update product: ${error.message}`);
   }
 }
 
+export async function getAllStores() {
+  try {
+    connectDB();
+    const stores = await Store.find();
+
+    return stores;
+  } catch (error: any) {
+    console.log(error.message);
+  }
+}
+
+export async function getStoreById(storeId: string) {
+  try {
+    connectDB();
+
+    const store = await Store.findOne({ _id: storeId });
+
+    if (!store) return null;
+
+    return store;
+  } catch (error) {
+    console.log(error);
+  }
+}
+// User Actions
 export async function saveUsers(users: UserType) {
   if (!users) return;
   let newUser;
