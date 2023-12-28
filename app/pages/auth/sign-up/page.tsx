@@ -31,6 +31,7 @@ const SignUp = () => {
   });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    console.log("onSubmit is called with values:", values);
     try {
       // Create a new user
       setIsLoading(true);
@@ -54,6 +55,7 @@ const SignUp = () => {
           {/* Image */}
           <img src="/assets/images/signUp.svg" className="md:w-1/2" />
           <form
+            id="signUpForm"
             onSubmit={form.handleSubmit(onSubmit)}
             className="flex flex-col gap-5 w-full mt-2"
           >

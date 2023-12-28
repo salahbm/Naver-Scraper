@@ -12,9 +12,9 @@ interface RestaurantData {
   category: string;
   address: string;
   phone: string;
-  result: any; // Update with the actual type
+  result: any;
   socialLinks: string[];
-  menu: any[]; // Update with the actual type
+  menu: any[];
 }
 
 export async function scrapeAndStoreProduct(restaurantUrl: string) {

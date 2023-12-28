@@ -25,8 +25,8 @@ const SingIn = () => {
     },
   });
 
-  const handleSubmit = (values: z.infer<typeof formSchema>) => {
-    console.log({ values });
+  const onSubmit = (values: z.infer<typeof formSchema>) => {
+    console.log(values);
   };
 
   return (
@@ -36,7 +36,7 @@ const SingIn = () => {
           {/* Image */}
           <img src="/assets/images/signIn.svg" className="md:w-1/2" />
           <form
-            onSubmit={form.handleSubmit(handleSubmit)}
+            onSubmit={form.handleSubmit(onSubmit)}
             className="flex flex-col gap-5 w-full mt-4"
           >
             <h2 className="h3-hold md:h2-bold pt-5 sm:pt-12">Log In Account</h2>
