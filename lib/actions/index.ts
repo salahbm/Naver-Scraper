@@ -2,20 +2,10 @@
 import { UserType } from "@/types";
 import { connectDB } from "../database/mongoose";
 import { scrapeNaverData } from "../scraper";
-import { User } from "../model/user.model";
-import { revalidatePath } from "next/cache";
-import { Store } from "../model/store.model";
 
-interface RestaurantData {
-  logo: string;
-  name: string;
-  category: string;
-  address: string;
-  phone: string;
-  result: any;
-  socialLinks: string[];
-  menu: any[];
-}
+import { revalidatePath } from "next/cache";
+import Store from "../model/store.model";
+import User from "../model/user.model";
 
 export async function scrapeAndStoreProduct(restaurantUrl: string) {
   if (!restaurantUrl) return;
@@ -23,6 +13,7 @@ export async function scrapeAndStoreProduct(restaurantUrl: string) {
   try {
     connectDB();
     const scrapeData = await scrapeNaverData(restaurantUrl);
+    console.log(`file: index.ts:58 ~ scrapeData:`, scrapeData);
     if (!scrapeData) return;
 
     const existingBrand = await Store.findOne({

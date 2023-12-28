@@ -5,4 +5,5 @@ const channelSchema = new mongoose.Schema({
   name: { type: String, required: true },
 });
 
-export const Channel = mongoose.model("Channel", channelSchema);
+const Channel = mongoose.model("Channel", channelSchema);
+export default Channel;

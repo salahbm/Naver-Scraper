@@ -8,4 +8,6 @@ const userSchema = new mongoose.Schema({
   recommendCode: { type: String },
 });
 
-export const User = mongoose.model("User", userSchema);
+const User = mongoose.models.User || mongoose.model("User", userSchema);
+
+export default User;

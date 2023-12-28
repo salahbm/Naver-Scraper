@@ -9,5 +9,5 @@ const storeSchema = new mongoose.Schema({
   visitorReview: { type: Number, required: true },
   socialLinks: [{ type: String }],
 });
-
-export const Store = mongoose.model("Store", storeSchema);
+const Store = mongoose.models.Store || mongoose.model("Store", storeSchema);
+export default Store;

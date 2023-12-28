@@ -8,4 +8,5 @@ const statisticsSchema = new mongoose.Schema({
   comments: { type: Number },
 });
 
-export const Statistics = mongoose.model("Statistics", statisticsSchema);
+const Statistics = mongoose.model("Statistics", statisticsSchema);
+export default Statistics;
