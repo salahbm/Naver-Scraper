@@ -36,7 +36,7 @@ const SignUp = () => {
     <main className="flex min-h-screen items-center justify-between bg-neutral-100 p-10">
       <Form {...form}>
         <div className="sm:w-420 flex-center justify-center flex-col md:flex-row">
-          <img src="/assets/images/hero-1.svg" />
+          <img src="/assets/images/signUp.svg" />
           <form
             onSubmit={form.handleSubmit(handleSubmit)}
             className="flex flex-col gap-5 w-full mt-2"
