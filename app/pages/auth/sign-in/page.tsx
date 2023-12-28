@@ -20,10 +20,8 @@ const SingIn = () => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: "",
+      email: "",
       password: "",
-      passwordConfirm: "",
-      number: "",
     },
   });
 
@@ -32,10 +30,11 @@ const SingIn = () => {
   };
 
   return (
-    <main className="flex min-h-screen items-center justify-between bg-neutral-100 p-10">
+    <main className="flex-center max-h-screen  p-10">
       <Form {...form}>
-        <div className="sm:w-420 flex-center justify-center flex-col md:flex-row">
-          <img src="/assets/images/signIn.svg" />
+        <div className="sm:w-420 flex-center justify-between flex-col md:flex-row">
+          {/* Image */}
+          <img src="/assets/images/signIn.svg" className="md:w-1/2" />
           <form
             onSubmit={form.handleSubmit(handleSubmit)}
             className="flex flex-col gap-5 w-full mt-4"
@@ -46,15 +45,15 @@ const SingIn = () => {
             </p>
             <FormField
               control={form.control}
-              name="number"
+              name="email"
               render={({ field }: any) => {
                 return (
                   <FormItem>
-                    <FormLabel>Your Number</FormLabel>
+                    <FormLabel>Your Email</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="010 2332 4554"
-                        type="number"
+                        placeholder="nialabs@gmail.com"
+                        type="email"
                         {...field}
                       />
                     </FormControl>
