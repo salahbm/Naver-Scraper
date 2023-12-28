@@ -8,7 +8,6 @@ interface pageProps {
 }
 const ProductDetails: FC<pageProps> = ({ params }) => {
   const [product, setProduct] = useState<any>([]);
-  console.log(`file: page.tsx:11 ~ product:`, product);
   useEffect(() => {
     function fetchLocal() {
       try {

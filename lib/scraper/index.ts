@@ -34,7 +34,7 @@ export async function scrapeNaverData(searchName: string): Promise<any> {
     return;
   }
 
-  wait(1);
+  wait(2);
 
   // handle restaurant info
   const handleName = await frame.$("#_title > div > span.Fc1rA");
@@ -54,6 +54,7 @@ export async function scrapeNaverData(searchName: string): Promise<any> {
   const handleBLogReview = await frame.$(
     "#app-root > div > div > div > div.place_section.no_margin.OP4V8 > div.zD5Nm.undefined > div.dAsGb > span:nth-child(2) > a"
   );
+  wait(1);
 
   // Extract text content from the element handles
   const name = handleName
