@@ -21,33 +21,24 @@ export const getVisitorsReview = async (frame: any) => {
 
   // load all reviews
   let moreBtn;
-
   do {
-    // Wait for the button to appear
     const btnSelector =
-      "#app-root > div > div > div > div:nth-child(6) > div:nth-child(3) > div.place_section.no_margin.mdJ86 > div > div > div.k2tmh > a";
+      "#app-root > div > div > div > div:nth-child(6) > div:nth-child(3) > div.place_section.no_margin.mdJ86 > div > div > div.k2tmh > a.Tvx37";
     await frame.waitForSelector(btnSelector);
-
-    // Click the button
     await frame.click(btnSelector);
-
-    // Wait for some time to allow the page to load the new content
-    await frame.waitForTimeout(2000); // Adjust the timeout as needed
-
-    // Check if the button still exists
-    moreBtn = await frame.$eval(
-      "#app-root > div > div > div > div:nth-child(6) > div:nth-child(3) > div.place_section.no_margin.mdJ86 > div > div > div.k2tmh > a > span",
-      (el: any) => el.innerText
-    );
-  } while (moreBtn === "더보기");
+    moreBtn = await frame.$(btnSelector);
+  } while (moreBtn);
 
   // Scrape the data from handle logic
-  await wait(1.5);
+  await wait(1);
   // Wait for the reviews container to appear
+  console.log("starting getting li");
+
   await frame.waitForSelector(".uNsI9");
 
   // Get all the review items
   const reviewItems = await frame.$$(".uNsI9 li");
+
   if (reviewItems.length === 0) {
     return [];
   }
