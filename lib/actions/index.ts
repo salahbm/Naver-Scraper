@@ -11,38 +11,40 @@ export async function scrapeAndStoreProduct(restaurantUrl: string) {
   if (!restaurantUrl) return;
 
   try {
-    connectDB();
+    // connectDB();
     const scrapeData = await scrapeNaverData(restaurantUrl);
     console.log(`file: index.ts:58 ~ scrapeData:`, scrapeData);
     if (!scrapeData) return;
 
-    const existingBrand = await Store.findOne({
-      phoneNumber: scrapeData.phoneNumber,
-    });
+    // console.log("Before findOne");
+    // const existingBrand = await Store.findOne({
+    //   phoneNumber: scrapeData.phoneNumber,
+    // }).lean();
+    // console.log("After findOne");
 
-    if (existingBrand) {
-      console.log("Brand exists");
-      return;
-    }
+    // if (existingBrand) {
+    //   console.log("Brand exists");
+    //   return;
+    // }
 
-    const blogReview = parseInt(scrapeData.blogReview, 10) || 0;
-    const visitorReview = parseInt(scrapeData.visitorsReview, 10) || 0;
+    // const blogReview = parseInt(scrapeData.blogReview, 10) || 0;
+    // const visitorReview = parseInt(scrapeData.visitorsReview, 10) || 0;
 
-    const socialLinks = scrapeData.socialLinks
-      ? scrapeData.socialLinks.split(",")
-      : [];
+    // const socialLinks = scrapeData.socialLinks
+    //   ? scrapeData.socialLinks.split(",")
+    //   : [];
 
-    const newStore = await Store.findOneAndUpdate({
-      storeName: scrapeData.name,
-      address: scrapeData.address,
-      type: scrapeData.category,
-      phoneNumber: scrapeData.phone,
-      blogReview: blogReview,
-      visitorReview: visitorReview,
-      socialLinks: socialLinks,
-    });
+    // const newStore = await Store.findOneAndUpdate({
+    //   storeName: scrapeData.name,
+    //   address: scrapeData.address,
+    //   type: scrapeData.category,
+    //   phoneNumber: scrapeData.phone,
+    //   blogReview: blogReview,
+    //   visitorReview: visitorReview,
+    //   socialLinks: socialLinks,
+    // });
 
-    revalidatePath(`/pages/products/${newStore?._id}`);
+    // revalidatePath(`/pages/products/${newStore?._id}`);
   } catch (error: any) {
     throw new Error(`Failed to create/update product: ${error.message}`);
   }
@@ -53,7 +55,12 @@ export async function getAllStores() {
     connectDB();
     const stores = await Store.find();
 
-    return stores;
+    if (stores.length === 0) {
+      console.log("No stores found in the collection.");
+      return;
+    } else {
+      return stores;
+    }
   } catch (error: any) {
     console.log(error.message);
   }

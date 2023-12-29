@@ -1,22 +1,21 @@
 import mongoose from "mongoose";
 
 let isConnected = false;
-const MONGODB_URI = "mongodb://localhost:27017/crawler";
-
+let MONGODB_URI = `mongodb://43.202.156.209:27017/crawler`;
 export const connectDB = async () => {
+  mongoose.set("strictQuery", true);
+
   if (!MONGODB_URI) {
-    return console.log("MongoDB URI is not defined");
+    return console.log("MongoDB uri is not defined");
   }
-
   if (isConnected) {
-    return console.log("=> Using an existing database connection");
+    return console.log("=> using an existing database connection");
   }
-
   try {
     await mongoose.connect(MONGODB_URI);
     isConnected = true;
     console.log("MongoDB connected");
   } catch (error: any) {
-    console.error("Error connecting to MongoDB:", error.message);
+    console.log(error.message);
   }
 };

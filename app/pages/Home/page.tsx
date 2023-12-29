@@ -34,10 +34,16 @@ const Home = async () => {
       <section className="trending-section">
         <h2 className="section-text">Searched Restaurants</h2>
 
-        <div className="flex flex-wrap gap-x-8 gap-y-4">
-          {restaurants?.map((product, index) => (
-            <RestaurantCard data={product} key={index} />
-          ))}
+        <div className="flex flex-wrap gap-x-8 gap-y-2">
+          {restaurants ? (
+            restaurants?.map((product, index) => (
+              <RestaurantCard data={product} key={index} />
+            ))
+          ) : (
+            <p className="text-center font-semibold text-lg text-neutral-700">
+              You have not searched brands yet
+            </p>
+          )}
         </div>
       </section>
     </>

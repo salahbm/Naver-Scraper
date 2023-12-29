@@ -1,12 +1,11 @@
 "use server";
 import puppeteer from "puppeteer";
-
-const result: any = {};
+import { getLogo, getMenu, getVisitorsReview } from "./helperFunctions";
 
 export async function scrapeNaverData(searchName: string): Promise<any> {
   const browser = await puppeteer.launch({ headless: false });
   const page = await browser.newPage();
-  await page.setViewport({ width: 1000, height: 10000 });
+  await page.setViewport({ width: 1920, height: 1080 });
   await page.goto("https://map.naver.com/v5/search/" + searchName);
   wait(1);
 
@@ -125,30 +124,14 @@ export async function scrapeNaverData(searchName: string): Promise<any> {
   }
 
   // get Logo
-  let logo;
-  let logoBtn = await frame.$eval(
-    ".flicking-camera > a:nth-child(4) > span",
-    (el: any) => el.innerText
-  );
+  const logo = await getLogo(frame);
 
-  if (logoBtn === "사진") {
-    // Click on the fourth child (in this case) of .flicking-camera
-    await frame.click(".flicking-camera > a:nth-child(4)");
-  } else {
-    // Click on the fifth child (in this case) of .flicking-camera
-    await frame.click(".flicking-camera > a:nth-child(5)");
-  }
-
-  const logoSelector = "#업체_0";
-  const handleLogo = await frame.waitForSelector(logoSelector);
-
-  // Check if handleLogo exists before trying to use it
-  logo = handleLogo
-    ? await frame.evaluate((img: any) => img.getAttribute("src"), handleLogo)
-    : "not available";
-
-  if (logo === "not available") {
-    console.log("No suitable logo button found.");
+  // get Visitors Review
+  let reviews;
+  try {
+    reviews = await getVisitorsReview(frame);
+  } catch (error: any) {
+    console.log("Error in getVisitorsReview: ", error.message);
   }
 
   const data: any = {
@@ -158,9 +141,10 @@ export async function scrapeNaverData(searchName: string): Promise<any> {
     address,
     phone,
     socialLinks,
-    menu,
+    // menu,
     visitorsReview,
     blogReview,
+    reviews,
   };
 
   browser.close();
@@ -173,30 +157,4 @@ async function wait(sec: number) {
   while (now - start < sec * 1000) {
     now = Date.now();
   }
-}
-
-async function getMenu(
-  nameClass: string,
-  priceClass: string,
-  imgClass: string,
-  ul: any
-): Promise<any[]> {
-  const arr: any[] = [];
-
-  const allName = await ul.$$(nameClass);
-  const allPrice = await ul.$$(priceClass);
-  const allImages = await ul.$$(imgClass);
-
-  for (const elementHandle of allName) {
-    const name = await elementHandle.evaluate((n: any) => n.innerText);
-    const priceElementHandle = allPrice[allName.indexOf(elementHandle)];
-    const imgElementHandle = allImages[allName.indexOf(elementHandle)];
-    const imageUrl = await imgElementHandle.evaluate((img: any) =>
-      img.getAttribute("src")
-    );
-    const price = await priceElementHandle.evaluate((p: any) => p.innerText);
-    arr.push({ name, price, imageUrl });
-  }
-
-  return arr;
 }
