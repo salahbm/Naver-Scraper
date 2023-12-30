@@ -24,7 +24,7 @@ export async function scrapeNaverData(searchName: string): Promise<any> {
 
   // Check if there are search results
   try {
-    await page.waitForSelector("#entryIframe", { timeout: 60000 });
+    await page.waitForSelector("#entryIframe", { timeout: 30000 });
 
     const iframeHandle: any | null = await page.$("#entryIframe");
     if (!iframeHandle) {
@@ -116,7 +116,7 @@ export async function scrapeNaverData(searchName: string): Promise<any> {
   //   const handleMenu = await frame.waitForSelector(
   //     "#app-root > div > div > div > div:nth-child(6) > div > div:nth-child(2) > div > ul" ||
   //       "#app-root > div > div > div > div:nth-child(6) > div:nth-child(2) > div.place_section.no_margin > div > ul"
-  //   );
+  //   ,   { timeout: 10000 });
 
   //   if (!handleMenu) {
   //     console.log("No Menu List");

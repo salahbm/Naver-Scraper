@@ -29,7 +29,7 @@ export const getVisitorsReview = async (frame: any) => {
   do {
     const btnSelector =
       "#app-root > div > div > div > div:nth-child(6) > div:nth-child(3) > div.place_section.no_margin.mdJ86 > div > div > div.k2tmh > a.Tvx37";
-    await frame.waitForSelector(btnSelector);
+    await frame.waitForSelector(btnSelector, { timeout: 10000 });
     await frame.click(btnSelector);
     moreBtn = await frame.$(btnSelector);
   } while (moreBtn);
@@ -86,7 +86,9 @@ export async function getLogo(frame: any) {
   }
 
   const logoSelector = "#업체_0";
-  const handleLogo = await frame.waitForSelector(logoSelector);
+  const handleLogo = await frame.waitForSelector(logoSelector, {
+    timeout: 10000,
+  });
 
   // Check if handleLogo exists before trying to use it
   logo = handleLogo
