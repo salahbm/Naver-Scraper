@@ -1,3 +1,8 @@
+// get visitors review
+
+import { relative } from "path/posix";
+import { Page } from "puppeteer";
+
 export const getVisitorsReview = async (frame: any) => {
   const arr: any[] = [];
 
@@ -57,7 +62,7 @@ export const getVisitorsReview = async (frame: any) => {
     });
 
     // Push the review name and count to the reviews array
-    arr.push({ name: reviewName, count: reviewCount });
+    arr.push({ type: reviewName, count: reviewCount });
   }
 
   return arr;
@@ -94,6 +99,47 @@ export async function getLogo(frame: any) {
   return logo;
 }
 
+// go to naver to get trending keywords
+export const getKeywords = async (page: Page, searchPrompt: string) => {
+  if (!page) return;
+  await page.setViewport({ width: 1920, height: 1080 });
+  await page.goto("https://www.naver.com/");
+  wait(1);
+
+  // Input searchPrompt
+  const searchFirstWord = searchPrompt.split(" ");
+  await page.keyboard.type(searchFirstWord[0]);
+  await page.click(`#sform > fieldset >  button`);
+
+  // Wait for the related keywords section
+  const relatedSearch = await page.waitForSelector(
+    "#nx_right_related_keywords",
+    { timeout: 10000 }
+  );
+
+  let keywords: string[] = [];
+
+  if (relatedSearch) {
+    // Adjust the selector for liItems
+    const liItems = await page.$$("#nx_right_related_keywords .item");
+
+    if (liItems.length === 0) return [];
+
+    for (const liItem of liItems) {
+      // Use $eval on page, not liItem, and adjust the selector
+      const keywordName = await page.$eval(
+        ".tit", // Adjust the selector to match the structure of your HTML
+        (el: any) => el.innerText
+      );
+      keywords.push(keywordName);
+    }
+
+    return keywords;
+  } else {
+    return [];
+  }
+};
+
 // Get Menu
 
 export async function getMenu(
@@ -121,7 +167,7 @@ export async function getMenu(
 
   return arr;
 }
-async function wait(sec: number) {
+export async function wait(sec: number) {
   let start = Date.now(),
     now = start;
   while (now - start < sec * 1000) {

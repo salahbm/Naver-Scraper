@@ -1,6 +1,12 @@
 "use server";
-import puppeteer from "puppeteer";
-import { getLogo, getMenu, getVisitorsReview } from "./helperFunctions";
+import puppeteer, { trimCache } from "puppeteer";
+import {
+  getKeywords,
+  getLogo,
+  getMenu,
+  getVisitorsReview,
+  wait,
+} from "./helperFunctions";
 
 export async function scrapeNaverData(searchName: string): Promise<any> {
   const browser = await puppeteer.launch({ headless: false });
@@ -94,34 +100,34 @@ export async function scrapeNaverData(searchName: string): Promise<any> {
     : ["not available"];
 
   // Check if there is menu information
-  const menuBtn = await frame.$eval(
-    ".flicking-camera > a:nth-child(2) > span",
-    (el: any) => el.innerText
-  );
-  let menu;
-  if (menuBtn !== "메뉴") {
-    console.log("no menu btn.");
-    menu = "not available";
-  } else {
-    // Click on the 'Menu' button
-    await frame.click(".flicking-camera > a:nth-child(2)");
+  // const menuBtn = await frame.$eval(
+  //   ".flicking-camera > a:nth-child(2) > span",
+  //   (el: any) => el.innerText
+  // );
+  // let menu;
+  // if (menuBtn !== "메뉴") {
+  //   console.log("no menu btn.");
+  //   menu = "not available";
+  // } else {
+  //   // Click on the 'Menu' button
+  //   await frame.click(".flicking-camera > a:nth-child(2)");
 
-    // Wait for the menu container to be present
-    const handleMenu = await frame.waitForSelector(
-      "#app-root > div > div > div > div:nth-child(6) > div > div:nth-child(2) > div > ul" ||
-        "#app-root > div > div > div > div:nth-child(6) > div:nth-child(2) > div.place_section.no_margin > div > ul"
-    );
+  //   // Wait for the menu container to be present
+  //   const handleMenu = await frame.waitForSelector(
+  //     "#app-root > div > div > div > div:nth-child(6) > div > div:nth-child(2) > div > ul" ||
+  //       "#app-root > div > div > div > div:nth-child(6) > div:nth-child(2) > div.place_section.no_margin > div > ul"
+  //   );
 
-    if (!handleMenu) {
-      console.log("No Menu List");
-      menu = "not available";
-    } else {
-      // Extract menu data
-      menu = handleMenu
-        ? await getMenu(".VQvNX", ".gl2cc", ".place_thumb img", handleMenu)
-        : ["not available"];
-    }
-  }
+  //   if (!handleMenu) {
+  //     console.log("No Menu List");
+  //     menu = "not available";
+  //   } else {
+  //     // Extract menu data
+  //     menu = handleMenu
+  //       ? await getMenu(".VQvNX", ".gl2cc", ".place_thumb img", handleMenu)
+  //       : ["not available"];
+  //   }
+  // }
 
   // get Logo
   const logo = await getLogo(frame);
@@ -132,6 +138,14 @@ export async function scrapeNaverData(searchName: string): Promise<any> {
     reviews = await getVisitorsReview(frame);
   } catch (error: any) {
     console.log("Error in getVisitorsReview: ", error.message);
+  }
+
+  // get keywords
+  let trendingKeywords;
+  try {
+    trendingKeywords = await getKeywords(page, searchName);
+  } catch (error: any) {
+    console.log(error.message);
   }
 
   const data: any = {
@@ -145,16 +159,9 @@ export async function scrapeNaverData(searchName: string): Promise<any> {
     visitorsReview,
     blogReview,
     reviews,
+    trendingKeywords,
   };
 
   browser.close();
   return data;
-}
-
-async function wait(sec: number) {
-  let start = Date.now(),
-    now = start;
-  while (now - start < sec * 1000) {
-    now = Date.now();
-  }
 }
