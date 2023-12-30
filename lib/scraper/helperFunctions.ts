@@ -37,7 +37,6 @@ export const getVisitorsReview = async (frame: any) => {
   // Scrape the data from handle logic
   await wait(1);
   // Wait for the reviews container to appear
-  console.log("starting getting li");
 
   await frame.waitForSelector(".uNsI9");
 
