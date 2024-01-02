@@ -16,40 +16,41 @@ export async function scrapeAndStoreProduct(restaurantUrl: string) {
     const scrapeData = await scrapeNaverData(restaurantUrl);
     console.log(`file: index.ts:58 ~ scrapeData:`, scrapeData);
 
-    // if (
-    //   !scrapeData ||
-    //   !scrapeData.name ||
-    //   !scrapeData.address ||
-    //   !scrapeData.category ||
-    //   !scrapeData.phone
-    // ) {
-    //   console.log("Insufficient data to create a store");
-    //   return;
-    // }
-    // await connectDB();
-    // const blogReview = parseInt(scrapeData.blogReview, 10) || 0;
-    // const visitorReview = parseInt(scrapeData.visitorsReview, 10) || 0;
+    if (
+      !scrapeData ||
+      !scrapeData.name ||
+      !scrapeData.address ||
+      !scrapeData.category ||
+      !scrapeData.phone
+    ) {
+      console.log("Insufficient data to create a store");
+      return;
+    }
+    await connectDB();
+    const blogReview = parseInt(scrapeData.blogReview, 10) || 0;
+    const visitorReview = parseInt(scrapeData.visitorsReview, 10) || 0;
 
-    // const socialLinks = scrapeData.socialLinks ? scrapeData.socialLinks : [];
+    const socialLinks = scrapeData.socialLinks ? scrapeData.socialLinks : [];
 
-    // const newStore = await Store.create({
-    //   scrapeData: {
-    //     logo: scrapeData.logo,
-    //     name: scrapeData.name,
-    //     category: scrapeData.category,
-    //     address: scrapeData.address,
-    //     phone: scrapeData.phone,
-    //     socialLinks: socialLinks,
-    //     visitorsReview: visitorReview.toString(),
-    //     blogReview: blogReview.toString(),
-    //     reviews: Array.isArray(scrapeData.reviews) ? scrapeData.reviews : [],
-    //     trendingKeywords: Array.isArray(scrapeData.trendingKeywords)
-    //       ? scrapeData.trendingKeywords
-    //       : [],
-    //   },
-    // });
+    const newStore = await Store.create({
+      scrapeData: {
+        logo: scrapeData.logo,
+        name: scrapeData.name,
+        category: scrapeData.category,
+        address: scrapeData.address,
+        phone: scrapeData.phone,
+        socialLinks: socialLinks,
+        visitorsReview: visitorReview.toString(),
+        blogReview: blogReview.toString(),
+        reviews: Array.isArray(scrapeData.reviews) ? scrapeData.reviews : [],
+        trendingKeywords: Array.isArray(scrapeData.trendingKeywords)
+          ? scrapeData.trendingKeywords
+          : [],
+      },
+    });
+console.log('Scraped Data is Stored', newStore?._id);
 
-    // revalidatePath(`/pages/products/${newStore?._id}`);
+    revalidatePath(`/pages/products/${newStore?._id}`);
   } catch (error: any) {
     throw new Error(`Failed to create/update product: ${error.message}`);
   }
