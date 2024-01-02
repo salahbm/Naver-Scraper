@@ -4,8 +4,8 @@ import { getAllStores } from "@/lib/actions";
 import Image from "next/image";
 
 const Home = async () => {
-  // const restaurants = await getAllStores();
-  // console.log(`file: page.tsx:8 ~ restaurants:`, restaurants);
+  const restaurants = await getAllStores();
+  console.log(`file: page.tsx:8 ~ restaurants:`, restaurants);
   return (
     <>
       <section className="px-6 md:px-20 py-24">
@@ -35,7 +35,7 @@ const Home = async () => {
         <h2 className="section-text">Searched Restaurants</h2>
 
         <div className="flex flex-wrap gap-x-8 gap-y-2">
-          {/* {restaurants ? (
+          {restaurants ? (
             restaurants?.map((product, index) => (
               <RestaurantCard data={product} key={index} />
             ))
@@ -43,7 +43,7 @@ const Home = async () => {
             <p className="text-center font-semibold text-lg text-neutral-700">
               You have not searched brands yet
             </p>
-          )} */}
+          )}
         </div>
       </section>
     </>
