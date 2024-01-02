@@ -11,8 +11,6 @@ export async function scrapeAndStoreProduct(restaurantUrl: string) {
   if (!restaurantUrl) return;
 
   try {
-
-
     const scrapeData = await scrapeNaverData(restaurantUrl);
     console.log(`file: index.ts:58 ~ scrapeData:`, scrapeData);
 
@@ -48,7 +46,7 @@ export async function scrapeAndStoreProduct(restaurantUrl: string) {
           : [],
       },
     });
-console.log('Scraped Data is Stored', newStore?._id);
+    console.log("Scraped Data is Stored", newStore?._id);
 
     revalidatePath(`/pages/products/${newStore?._id}`);
   } catch (error: any) {
@@ -74,7 +72,7 @@ export async function getAllStores() {
 
 export async function getStoreById(storeId: string) {
   try {
-   await connectDB();
+    await connectDB();
 
     const store = await Store.findOne({ _id: storeId });
 
