@@ -9,22 +9,21 @@ import {
 } from "./helperFunctions";
 
 export async function scrapeNaverData(searchName: string): Promise<any> {
-  const browser = await puppeteer.launch({ headless: false });
+  
+  const browser = await puppeteer.launch({ headless: 'new' });
   const page = await browser.newPage();
+  await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36');
   await page.setViewport({ width: 1920, height: 1080 });
-  await page.goto("https://map.naver.com/v5/search/" + searchName);
-  wait(1);
+  await page.goto("https://map.naver.com/v5/search/" + searchName, { waitUntil: 'domcontentloaded', timeout: 60000 });
+
+  await wait(1);
 
   let frame: any | null;
-
-  // Set up a timer to close the browser if there are no search results
   const timer = setTimeout(() => {
     browser.close();
   }, 5000);
-
-  // Check if there are search results
   try {
-    await page.waitForSelector("#entryIframe", { timeout: 30000 });
+    await page.waitForFunction(() => document.querySelector("#entryIframe") !== null, { timeout: 60000 });
 
     const iframeHandle: any | null = await page.$("#entryIframe");
     if (!iframeHandle) {
@@ -39,7 +38,7 @@ export async function scrapeNaverData(searchName: string): Promise<any> {
     return;
   }
 
-  wait(2);
+  await wait(2);
 
   // handle restaurant info
   const handleName = await frame.$("#_title > div > span.Fc1rA");

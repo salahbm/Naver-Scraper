@@ -1,6 +1,5 @@
 // get visitors review
 
-import { relative } from "path/posix";
 import { Page } from "puppeteer";
 
 export const getVisitorsReview = async (frame: any) => {
