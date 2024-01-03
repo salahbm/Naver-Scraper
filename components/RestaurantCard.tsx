@@ -9,7 +9,7 @@ interface Props {
 const RestaurantCard = ({ data }: Props) => {
   if (!data) return;
   return (
-    <Link href={`/pages/products/${data?._id}`}>
+    <Link href={`/pages/products/${data?._id?.toString()}`}>
       <div className="max-w-lg  mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
         <img
           className="w-full h-64 object-cover object-center"

@@ -5,16 +5,17 @@ import { redirect } from "next/navigation";
 import { FC, useEffect, useState } from "react";
 
 interface pageProps {
-  params: string;
+  params: { id: string };
 }
 const ProductDetails: FC<pageProps> = async ({ params }) => {
-  console.log(`file: page.tsx:11 ~ params:`, params);
-  const product: RestaurantCardProps = await getStoreById(params);
+  console.log(`file: page.tsx:11 ~ params:`, params.id);
+  const product: RestaurantCardProps = await getStoreById(params.id);
+  console.log(`file: page.tsx:13 ~ product:`, product);
 
-  if (!product) redirect("/");
+  // if (!product) redirect("/");
 
   return (
-    <section className="max-w-[1240px] mx-auto rounded-lg " key={params}>
+    <section className="max-w-[1240px] mx-auto rounded-lg " key={params.id}>
       <div className="flex items-center justify-center">
         <img
           className="max-w-md h-64 object-cover object-center "

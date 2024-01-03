@@ -76,14 +76,18 @@ export async function getAllStores() {
 export async function getStoreById(storeId: string) {
   try {
     await connectDB();
+    if (!mongoose.Types.ObjectId.isValid(storeId)) {
+      throw new Error("Invalid ObjectId format");
+    }
+    const objectId = new mongoose.Types.ObjectId(storeId);
 
-    const store = await Store.findOne({ _id: storeId });
+    const store = await Store.findOne({ _id: objectId });
 
     if (!store) return null;
 
     return store;
-  } catch (error) {
-    console.log(error);
+  } catch (error: any) {
+    console.log("Cant store by id", error.message);
   }
 }
 // User Actions

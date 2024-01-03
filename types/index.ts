@@ -16,7 +16,7 @@ export type Product = {
   url: string;
   currency: string;
   image: string;
-  title: string;
+  name: string;
   currentPrice: number;
   originalPrice: number;
   priceHistory: PriceHistoryItem[] | [];
@@ -51,7 +51,7 @@ export type EmailProductInfo = {
 export interface RestaurantCardProps {
   _id?: string;
   logo?: string;
-  name: string;
+  name?: string;
   category?: string;
   address?: string;
   phone?: string;
