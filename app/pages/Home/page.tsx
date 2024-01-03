@@ -37,7 +37,7 @@ const Home = async () => {
         <div className="flex flex-wrap gap-x-8 gap-y-2">
           {restaurants ? (
             restaurants?.map((product, index) => (
-              <RestaurantCard data={product} key={index} />
+              <RestaurantCard data={product.scrapeData} key={index} />
             ))
           ) : (
             <p className="text-center font-semibold text-lg text-neutral-700">

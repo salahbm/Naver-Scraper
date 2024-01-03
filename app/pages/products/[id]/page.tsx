@@ -1,41 +1,20 @@
-"use client";
+import { getStoreById } from "@/lib/actions";
+import { RestaurantCardProps } from "@/types";
 import { redirect } from "next/navigation";
 
 import { FC, useEffect, useState } from "react";
 
 interface pageProps {
-  params: { id: string };
+  params: string;
 }
-const ProductDetails: FC<pageProps> = ({ params }) => {
-  const [product, setProduct] = useState<any>([]);
-  useEffect(() => {
-    function fetchLocal() {
-      try {
-        // Retrieve stored data from local storage and parse it
-        const storedDataJson: string | null =
-          localStorage.getItem("storedData");
-        const storedData = JSON.parse(storedDataJson || "[]");
-
-        // Find the data based on the provided phone number
-        const foundData = storedData.find(
-          (data: any) => data.phone === params.id
-        );
-
-        // Return the found data or null if not found
-        setProduct(foundData);
-      } catch (error) {
-        // Handle errors, e.g., if JSON parsing fails
-        console.error("Error fetching local data:", error);
-        return null;
-      }
-    }
-    fetchLocal();
-  }, []);
+const ProductDetails: FC<pageProps> = async ({ params }) => {
+  console.log(`file: page.tsx:11 ~ params:`, params);
+  const product: RestaurantCardProps = await getStoreById(params);
 
   if (!product) redirect("/");
 
   return (
-    <section className="max-w-[1240px] mx-auto rounded-lg " key={params.id}>
+    <section className="max-w-[1240px] mx-auto rounded-lg " key={params}>
       <div className="flex items-center justify-center">
         <img
           className="max-w-md h-64 object-cover object-center "
@@ -79,7 +58,7 @@ const ProductDetails: FC<pageProps> = ({ params }) => {
           </ul>
         </div>
 
-        {product.menu !== "not available" ? (
+        {/* {product?.menu !== "not available" ? (
           <div className="mt-4">
             <h3 className="text-lg font-semibold mb-2 text-green-500">Menu:</h3>
             <ul>
@@ -100,7 +79,7 @@ const ProductDetails: FC<pageProps> = ({ params }) => {
               ))}
             </ul>
           </div>
-        ) : null}
+        ) : null} */}
       </div>
     </section>
   );

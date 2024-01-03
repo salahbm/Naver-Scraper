@@ -6,6 +6,7 @@ import { scrapeNaverData } from "../scraper";
 import { revalidatePath } from "next/cache";
 import Store from "../model/store.model";
 import User from "../model/user.model";
+import mongoose from "mongoose";
 
 export async function scrapeAndStoreProduct(restaurantUrl: string) {
   if (!restaurantUrl) return;
@@ -92,7 +93,7 @@ export async function saveUsers(users: UserType) {
   try {
     await connectDB(); // Connect to the database
 
-    const existingUser = await User.findOne({ phoneNumber: users.phoneNumber });
+    const existingUser = await User.findOne({ _id: users._id });
 
     if (existingUser) {
       console.log("User exists", existingUser);

@@ -3,6 +3,7 @@ export type PriceHistoryItem = {
 };
 
 export type UserType = {
+  _id: string;
   email: string;
   phoneNumber: string;
   name: string;
@@ -48,6 +49,7 @@ export type EmailProductInfo = {
 };
 
 export interface RestaurantCardProps {
+  _id?: string;
   logo?: string;
   name: string;
   category?: string;
@@ -58,6 +60,7 @@ export interface RestaurantCardProps {
   blogReview?: string;
   reviews?: Review[];
   trendingKeywords?: string[];
+  menu?: any[] | string;
 }
 
 interface Review {
