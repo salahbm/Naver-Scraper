@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 let isConnected = false;
-let MONGODB_URI = `mongodb://0.0.0.0:27017/crawler`;
+let MONGODB_URI = `mongodb://3.34.195.228:27017/crawler`;
 export const connectDB = async () => {
   mongoose.set("strictQuery", true);
   mongoose.set("debug", true);
