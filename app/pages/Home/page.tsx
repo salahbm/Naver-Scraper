@@ -5,7 +5,7 @@ import Image from "next/image";
 
 const Home = async () => {
   const restaurants = await getAllStores();
-  console.log(`file: page.tsx:8 ~ restaurants:`, restaurants);
+
   return (
     <>
       <section className="px-6 md:px-20 py-24">
