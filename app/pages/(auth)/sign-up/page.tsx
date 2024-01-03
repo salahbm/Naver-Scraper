@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { formSchema } from "@/lib/validation";
-import { saveUsers } from "@/lib/actions";
+import { saveUsers } from "@/lib/auth";
 
 const SignUp = () => {
   const [isLoading, setIsLoading] = useState(false);

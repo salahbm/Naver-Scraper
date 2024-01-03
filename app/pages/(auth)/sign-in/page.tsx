@@ -15,7 +15,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { formSchemaSignIn } from "@/lib/validation";
 import Link from "next/link";
-import { loginUser } from "@/lib/actions";
+import { clearExpiredSessions, loginUser } from "@/lib/auth";
 
 const SingIn = () => {
   const form = useForm<z.infer<typeof formSchemaSignIn>>({
@@ -34,6 +34,7 @@ const SingIn = () => {
       if (user) {
         console.log("User logged in successfully", user);
         // Perform any actions after successful login (e.g., redirect)
+        await clearExpiredSessions();
       } else {
         console.log("Invalid credentials");
         // Handle invalid credentials (e.g., display an error message)

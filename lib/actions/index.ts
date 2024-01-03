@@ -7,6 +7,7 @@ import { revalidatePath } from "next/cache";
 import Store from "../model/store.model";
 import User from "../model/user.model";
 import mongoose from "mongoose";
+import { Session } from "../model/session.model";
 
 export async function scrapeAndStoreProduct(restaurantUrl: string) {
   if (!restaurantUrl) return;
@@ -88,55 +89,5 @@ export async function getStoreById(storeId: string) {
     return store;
   } catch (error: any) {
     console.log("Cant store by id", error.message);
-  }
-}
-// User Actions
-export async function saveUsers(users: UserType) {
-  if (!users) return;
-  let newUser;
-  try {
-    await connectDB(); // Connect to the database
-
-    const existingUser = await User.findOne({ _id: users._id });
-
-    if (existingUser) {
-      console.log("User exists", existingUser);
-      // Handle existing user logic (e.g., redirect)
-    } else {
-      // Create a new user
-      newUser = new User({
-        username: users.name,
-        email: users.email,
-        passwordHash: users.password,
-        phoneNumber: users.phoneNumber,
-      });
-
-      // Save the user to the database
-      await newUser.save();
-      console.log("User created successfully");
-    }
-
-    return newUser;
-  } catch (error: any) {
-    throw new Error(`Failed to create/update user: ${error.message}`);
-  }
-}
-
-export async function loginUser(credentials: {
-  email: string;
-  password: string;
-}) {
-  try {
-    await connectDB(); // Connect to the database
-
-    // Find the user with the provided email
-    const user = await User.findOne({ email: credentials.email });
-
-    // Check if the user exists and if the password matches
-
-    // Return the user if login is successful
-    return user;
-  } catch (error: any) {
-    throw new Error(`Failed to login user: ${error.message}`);
   }
 }
