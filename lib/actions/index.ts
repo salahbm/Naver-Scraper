@@ -24,6 +24,8 @@ export async function scrapeAndStoreProduct(restaurantUrl: string) {
       console.log("Insufficient data to create a store");
       return;
     }
+    console.log("Started storing in the DB");
+
     await connectDB();
     const blogReview = parseInt(scrapeData.blogReview, 10) || 0;
     const visitorReview = parseInt(scrapeData.visitorsReview, 10) || 0;

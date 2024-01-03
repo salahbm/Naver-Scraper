@@ -7,6 +7,7 @@ interface Props {
 }
 
 const RestaurantCard = ({ data }: Props) => {
+  if (!data) return;
   return (
     <Link href={`/pages/products/${data?.phone}`}>
       <div className="max-w-lg mx-auto bg-white shadow-lg rounded-lg overflow-hidden">

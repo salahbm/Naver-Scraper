@@ -48,15 +48,19 @@ export type EmailProductInfo = {
 };
 
 export interface RestaurantCardProps {
-  logo: string;
+  logo?: string;
   name: string;
-  category: string;
-  address: string;
-  phone: string;
-  socialLinks: string[];
-  menu: {
-    name: string;
-    price: string;
-    imageUrl: string;
-  }[];
+  category?: string;
+  address?: string;
+  phone?: string;
+  socialLinks?: string[];
+  visitorsReview?: string;
+  blogReview?: string;
+  reviews?: Review[];
+  trendingKeywords?: string[];
+}
+
+interface Review {
+  type: string;
+  count: number;
 }

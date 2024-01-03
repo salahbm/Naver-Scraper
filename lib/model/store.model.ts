@@ -22,6 +22,6 @@ const storeSchema = new mongoose.Schema({
   scrapeData: scrapeDataSchema,
 });
 
-const Store = mongoose.models.Store || mongoose.model("Store", storeSchema);
+const Store = mongoose.models.Store || mongoose.model("stores", storeSchema);
 
 export default Store;
