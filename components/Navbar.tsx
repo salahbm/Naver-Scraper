@@ -26,7 +26,7 @@ const Navbar = () => {
 
         <div className="flex items-center gap-5">
           {navIcons.map((icon, index) => (
-            <Link href="/pages/auth/sign-in" key={index}>
+            <Link href="/pages/sign-in" key={index}>
               <Image
                 key={icon.alt}
                 src={icon.src}

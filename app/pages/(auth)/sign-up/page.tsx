@@ -27,6 +27,7 @@ const SignUp = () => {
       password: "",
       passwordConfirm: "",
       phoneNumber: "",
+      recommendCode: "",
     },
   });
 
@@ -47,6 +48,7 @@ const SignUp = () => {
       console.error("Error creating user:", error.message);
     }
   };
+  const onInvalid = (errors: any) => console.error(errors);
 
   return (
     <main className="flex items-center max-h-screen justify-center p-10">
@@ -56,7 +58,7 @@ const SignUp = () => {
           <img src="/assets/images/signUp.svg" className="md:w-1/2" />
           <form
             id="signUpForm"
-            onSubmit={form.handleSubmit(onSubmit)}
+            onSubmit={form.handleSubmit(onSubmit, onInvalid)}
             className="flex flex-col gap-5 w-full mt-2"
           >
             <h2 className="h3-hold md:h2-bold pt-5 sm:pt-8">Log In Account</h2>
@@ -71,7 +73,7 @@ const SignUp = () => {
                   <FormItem>
                     <FormLabel>Name</FormLabel>
                     <FormControl>
-                      <Input placeholder="Name" type="name" {...field} />
+                      <Input placeholder="Kim John" type="name" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -137,10 +139,10 @@ const SignUp = () => {
               render={({ field }: any) => {
                 return (
                   <FormItem>
-                    <FormLabel>Password confirm</FormLabel>
+                    <FormLabel>Confirm Password </FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="Password confirm"
+                        placeholder="Confirm Password"
                         type="password"
                         {...field}
                       />
