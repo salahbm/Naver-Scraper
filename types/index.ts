@@ -3,7 +3,7 @@ export type PriceHistoryItem = {
 };
 
 export type UserType = {
-  _id: string;
+  _id?: string;
   email: string;
   phoneNumber: string;
   name: string;
