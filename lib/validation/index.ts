@@ -21,5 +21,14 @@ export const formSchema = z.object({
     .max(14, {
       message: "Must be a valid mobile number with at most 14 digits.",
     }),
-  recommendCode: z.string().optional(),
+});
+
+export const formSchemaSignIn = z.object({
+  email: z
+    .string()
+    .min(1, { message: "This field has to be filled." })
+    .email("This is not a valid email."),
+  password: z
+    .string()
+    .min(6, { message: "Password must be at least 6 characters." }),
 });

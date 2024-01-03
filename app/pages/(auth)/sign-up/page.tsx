@@ -27,7 +27,6 @@ const SignUp = () => {
       password: "",
       passwordConfirm: "",
       phoneNumber: "",
-      recommendCode: "",
     },
   });
 
@@ -51,7 +50,7 @@ const SignUp = () => {
   const onInvalid = (errors: any) => console.error(errors);
 
   return (
-    <main className="flex items-center max-h-screen justify-center p-10">
+    <main className="flex items-center max-h-screen justify-center p-2 px-4">
       <Form {...form}>
         <div className="sm:w-420 flex-center justify-between flex-col md:flex-row">
           {/* Image */}
@@ -59,7 +58,7 @@ const SignUp = () => {
           <form
             id="signUpForm"
             onSubmit={form.handleSubmit(onSubmit, onInvalid)}
-            className="flex flex-col gap-5 w-full mt-2"
+            className="flex flex-col gap-2 w-full mt-1"
           >
             <h2 className="h3-hold md:h2-bold pt-5 sm:pt-8">Log In Account</h2>
             <p className="text-light-3 small-medium md:base-regular mt-1">
@@ -152,16 +151,16 @@ const SignUp = () => {
                 );
               }}
             />
+
+            <Button type="submit" className="w-full">
+              {isLoading ? "Creating..." : "Submit"}
+            </Button>
             <p className=" text-start mt-2 ">
               Don't have account ?{" "}
               <Link href={"./sign-in"} className="text-blue-500 font-bold">
                 Sign In
               </Link>
             </p>
-
-            <Button type="submit" className="w-full">
-              {isLoading ? "Creating..." : "Submit"}
-            </Button>
           </form>
         </div>
       </Form>

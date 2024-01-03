@@ -109,7 +109,6 @@ export async function saveUsers(users: UserType) {
         email: users.email,
         passwordHash: users.password,
         phoneNumber: users.phoneNumber,
-        recommendCode: users.recommendCode,
       });
 
       // Save the user to the database
@@ -120,5 +119,24 @@ export async function saveUsers(users: UserType) {
     return newUser;
   } catch (error: any) {
     throw new Error(`Failed to create/update user: ${error.message}`);
+  }
+}
+
+export async function loginUser(credentials: {
+  email: string;
+  password: string;
+}) {
+  try {
+    await connectDB(); // Connect to the database
+
+    // Find the user with the provided email
+    const user = await User.findOne({ email: credentials.email });
+
+    // Check if the user exists and if the password matches
+
+    // Return the user if login is successful
+    return user;
+  } catch (error: any) {
+    throw new Error(`Failed to login user: ${error.message}`);
   }
 }

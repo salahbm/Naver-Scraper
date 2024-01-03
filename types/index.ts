@@ -8,7 +8,6 @@ export type UserType = {
   phoneNumber: string;
   name: string;
   password: string;
-  recommendCode?: string;
 };
 
 export type Product = {

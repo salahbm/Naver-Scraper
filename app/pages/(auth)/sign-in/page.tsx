@@ -13,20 +13,34 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { formSchema } from "@/lib/validation";
+import { formSchemaSignIn } from "@/lib/validation";
 import Link from "next/link";
+import { loginUser } from "@/lib/actions";
 
 const SingIn = () => {
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<z.infer<typeof formSchemaSignIn>>({
+    resolver: zodResolver(formSchemaSignIn),
     defaultValues: {
       email: "",
       password: "",
     },
   });
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
-    console.log(values);
+  const onSubmit = async (values: z.infer<typeof formSchemaSignIn>) => {
+    try {
+      // Call a function to log in the user
+      const user = await loginUser(values);
+
+      if (user) {
+        console.log("User logged in successfully", user);
+        // Perform any actions after successful login (e.g., redirect)
+      } else {
+        console.log("Invalid credentials");
+        // Handle invalid credentials (e.g., display an error message)
+      }
+    } catch (error: any) {
+      console.error("Error logging in:", error.message);
+    }
   };
 
   return (
