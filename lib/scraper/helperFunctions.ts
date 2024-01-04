@@ -13,26 +13,42 @@ export const getIframeFromSearch = async (page: Page, searchPrompt: string) => {
 
   wait(1);
 
-  let frame: any | null;
+  let searchFrame: any | null;
 
   try {
     await page.waitForFunction(
-      () => document.querySelector("#entryIframe") !== null,
+      () => document.querySelector("#searchIframe") !== null,
       { timeout: 60000 }
     );
 
-    const iframeHandle: any | null = await page.$("#entryIframe");
+    const iframeHandle: any | null = await page.$("#searchIframe");
     if (!iframeHandle) {
       throw new Error("iframe element not found.");
     }
 
-    frame = await iframeHandle.contentFrame();
-  } catch {
-    console.log(searchPrompt + " iframe not found.");
+    searchFrame = await iframeHandle.contentFrame();
+  } catch (error) {
+    console.log(searchPrompt + " iframe not found.", error);
     return;
   }
 
-  await wait(2);
+  const liElements = await searchFrame.$$eval("li", (lis: any) => {
+    return lis.map((li: any) => {
+      const linkElement = li.querySelector("a.tzwk0");
+      const titleElement = li.querySelector("span.TYaxT");
+      const locationElement = li.querySelector("span.Pb4bU");
+      const typeElement = li.querySelector("span.KCMnt");
+
+      const link = linkElement?.getAttribute("href") || "";
+      const title = titleElement?.textContent || "";
+      const location = locationElement?.textContent || "";
+      const type = typeElement?.textContent || "";
+
+      return { link, title, location, type };
+    });
+  });
+
+  console.log(liElements);
 };
 // get visitors review
 export const getVisitorsReview = async (frame: any) => {

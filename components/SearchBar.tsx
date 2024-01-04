@@ -27,11 +27,11 @@ const SearchBar = () => {
   const { data: session }: any = useSession();
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const isValidLink = isValidNaverProductUrl(searchPrompt);
-    if (!isValidLink)
-      return alert(
-        "Please provide Restaurant name and location, EX: '써브웨이 낙성대점'"
-      );
+    // const isValidLink = isValidNaverProductUrl(searchPrompt);
+    // if (!isValidLink)
+    //   return alert(
+    //     "Please provide Restaurant name and location, EX: '써브웨이 낙성대점'"
+    //   );
     // Scrap the product
     try {
       setIsLoading(true);

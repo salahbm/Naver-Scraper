@@ -12,13 +12,36 @@ import {
 export async function scrapeNaverData(searchName: string): Promise<any> {
   const browser = await puppeteer.launch({ headless: false });
   const page = await browser.newPage();
-
   // await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36');
   // await page.setViewport({ width: 1920, height: 1080 });
   // await page.goto("https://map.naver.com/v5/search/" + searchName, { waitUntil: 'domcontentloaded', timeout: 60000 });
-
-  const frame: any | null = await getIframeFromSearch(page, searchName);
+  await getIframeFromSearch(page, searchName);
   await wait(1);
+
+  let frame: any | null;
+  const timer = setTimeout(() => {
+    browser.close();
+  }, 5000);
+  try {
+    await page.waitForFunction(
+      () => document.querySelector("#entryIframe") !== null,
+      { timeout: 60000 }
+    );
+
+    const iframeHandle: any | null = await page.$("#entryIframe");
+    if (!iframeHandle) {
+      throw new Error("iframe element not found.");
+    }
+
+    frame = await iframeHandle.contentFrame();
+    clearTimeout(timer);
+  } catch {
+    console.log(searchName + " iframe not found.");
+    browser.close();
+    return;
+  }
+
+  await wait(2);
 
   // handle restaurant info
   const handleName = await frame.$("#_title > div > span.Fc1rA");
