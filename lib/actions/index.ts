@@ -1,13 +1,12 @@
 "use server";
-import { UserType } from "@/types";
+
 import { connectDB } from "../database/mongoose";
 import { scrapeNaverData } from "../scraper";
 
 import { revalidatePath } from "next/cache";
 import Store from "../model/store.model";
-import User from "../model/user.model";
+
 import mongoose from "mongoose";
-import { Session } from "../model/session.model";
 
 export async function scrapeAndStoreProduct(restaurantUrl: string) {
   if (!restaurantUrl) return;

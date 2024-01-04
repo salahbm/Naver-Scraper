@@ -1,7 +1,8 @@
+"use server";
 import { UserType } from "@/types";
 import { connectDB } from "../database/mongoose";
 import User from "../model/user.model";
-import { Session } from "../model/session.model";
+import Session from "../model/session.model";
 
 // User Actions
 export async function saveUsers(users: UserType) {
