@@ -1,13 +1,12 @@
+"use client";
+import { signOut, useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
-
-const navIcons = [
-  // { src: "/assets/icons/search.svg", alt: "search" },
-  // { src: "/assets/icons/black-heart.svg", alt: "heart" },
-  { src: "/assets/icons/user.svg", alt: "user" },
-];
+import { Button } from "./ui/button";
 
 const Navbar = () => {
+  const { data: session }: any = useSession();
+  console.log(`file: Navbar.tsx:9 ~ session:`, session);
   return (
     <header className="w-full">
       <nav className="nav">
@@ -24,19 +23,30 @@ const Navbar = () => {
           </p>
         </Link>
 
-        <div className="flex items-center gap-5">
-          {navIcons.map((icon, index) => (
-            <Link href="/pages/sign-in" key={index}>
+        <div className="flex items-center justify-center">
+          {!session ? (
+            <Link href="/pages/sign-in">
               <Image
-                key={icon.alt}
-                src={icon.src}
-                alt={icon.alt}
+                src="/assets/icons/user.svg"
+                alt="user icon"
                 width={28}
                 height={28}
                 className="object-contain"
               />
             </Link>
-          ))}
+          ) : (
+            <>
+              {session.user?.email}
+              <Button
+                className="mx-1 text-white"
+                type="button"
+                variant={"default"}
+                onClick={() => signOut()}
+              >
+                Log Out
+              </Button>
+            </>
+          )}
         </div>
       </nav>
     </header>

@@ -3,6 +3,8 @@ import { Space_Grotesk, Montserrat } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import NextTopLoader from "nextjs-toploader";
+import { getServerSession } from "next-auth";
+import AuthProvider from "@/lib/auth/SessionProvider";
 
 const inter = Montserrat({ subsets: ["latin"] });
 const spaceGrotesk = Space_Grotesk({
@@ -15,19 +17,22 @@ export const metadata: Metadata = {
   description: "Get latest notifications and save money",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const session = await getServerSession();
   return (
     <html lang="en">
       <body className={inter.className}>
-        <main className="max-w-10xl mx-auto">
-          <NextTopLoader color="green" />
-          <Navbar />
-          {children}
-        </main>
+        <AuthProvider session={session}>
+          <main className="max-w-10xl mx-auto">
+            <NextTopLoader color="green" />
+            <Navbar />
+            {children}
+          </main>
+        </AuthProvider>
       </body>
     </html>
   );
