@@ -44,6 +44,45 @@ export const authOptions: any = {
       clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
     }),
   ],
+  callbacks: {
+    async signIn({ user, account }: { user: AuthUser; account: Account }) {
+      if (account?.provider == "credentials") {
+        return true;
+      }
+      if (account?.provider == "github") {
+        await connectDB();
+        try {
+          const existingUser = await User.findOne({ email: user.email });
+          if (!existingUser) {
+            const newUser = new User({
+              email: user.email,
+            });
+            await newUser.save();
+            return true;
+          }
+          return true;
+        } catch (error: any) {
+          console.log("ERROR Saving User", error.message);
+        }
+      }
+      if (account?.provider == "google") {
+        await connectDB();
+        try {
+          const existingUser = await User.findOne({ email: user.email });
+          if (!existingUser) {
+            const newUser = new User({
+              email: user.email,
+            });
+            await newUser.save();
+            return true;
+          }
+          return true;
+        } catch (error: any) {
+          console.log("ERROR Saving User", error.message);
+        }
+      }
+    },
+  },
 };
 
 export const handler = NextAuth(authOptions);
