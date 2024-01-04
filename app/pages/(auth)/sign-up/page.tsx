@@ -16,9 +16,11 @@ import {
 import { Input } from "@/components/ui/input";
 import { formSchema } from "@/lib/validation";
 import { saveUsers } from "@/lib/auth";
+import { useRouter } from "next/navigation";
 
 const SignUp = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -39,12 +41,14 @@ const SignUp = () => {
 
       const user = await saveUsers(values);
       if (user) {
-        console.log(`file: page.tsx:41 ~ user:`, user);
+        alert(`User successfully created ${user?.email}`);
         setIsLoading(false);
+        router.replace("/pages/sign-in");
       }
       console.log("User created successfully");
     } catch (error: any) {
       console.error("Error creating user:", error.message);
+      setIsLoading(false);
     }
   };
   const onInvalid = (errors: any) => console.error(errors);

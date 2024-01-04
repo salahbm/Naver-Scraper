@@ -2,14 +2,16 @@
 
 import { connectDB } from "../database/mongoose";
 import { scrapeNaverData } from "../scraper";
-
 import { revalidatePath } from "next/cache";
 import Store from "../model/store.model";
-
 import mongoose from "mongoose";
+import { UserType } from "@/types";
 
-export async function scrapeAndStoreProduct(restaurantUrl: string) {
-  if (!restaurantUrl) return;
+export async function scrapeAndStoreProduct(
+  restaurantUrl: string,
+  user: UserType
+) {
+  if (!restaurantUrl && !user?._id) return;
 
   try {
     const scrapeData = await scrapeNaverData(restaurantUrl);
@@ -34,6 +36,7 @@ export async function scrapeAndStoreProduct(restaurantUrl: string) {
     const socialLinks = scrapeData.socialLinks ? scrapeData.socialLinks : [];
 
     const newStore = await Store.create({
+      user: user._id,
       scrapeData: {
         logo: scrapeData.logo,
         name: scrapeData.name,

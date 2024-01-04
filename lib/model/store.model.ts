@@ -1,3 +1,4 @@
+// store.model.js
 import mongoose from "mongoose";
 
 const reviewSchema = new mongoose.Schema({
@@ -19,6 +20,7 @@ const scrapeDataSchema = new mongoose.Schema({
 });
 
 const storeSchema = new mongoose.Schema({
+  user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
   scrapeData: scrapeDataSchema,
 });
 
