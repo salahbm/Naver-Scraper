@@ -51,7 +51,7 @@ const SingIn = () => {
       <div className="sm:w-420 flex-center justify-between flex-col md:flex-row">
         {/* Image */}
         <img src="/assets/images/signIn.svg" className="md:w-1/2" />
-        <>
+        <div>
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(onSubmit)}
@@ -108,7 +108,7 @@ const SingIn = () => {
             </form>
           </Form>
           <p className="mt-2 ">
-            Don't have account ?{" "}
+            Don't have account?{" "}
             <Link href={"./sign-up"} className="text-blue-500 font-bold">
               Sign up
             </Link>
@@ -122,14 +122,14 @@ const SingIn = () => {
             Sign In with Github
           </Button>
           <Button
-            className="text-white my-1"
+            className="text-white m-1"
             type="button"
             variant={"secondary"}
             onClick={() => signIn("google")}
           >
             Sign In with Google
           </Button>
-        </>
+        </div>
       </div>
     </main>
   );
