@@ -1,7 +1,40 @@
-// get visitors review
-
 import { Page } from "puppeteer";
+// get chosen iframe
+export const getIframeFromSearch = async (page: Page, searchPrompt: string) => {
+  if (!page) return;
+  await page.setUserAgent(
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+  );
+  await page.setViewport({ width: 1920, height: 1080 });
+  await page.goto("https://map.naver.com/v5/search/" + searchPrompt, {
+    waitUntil: "domcontentloaded",
+    timeout: 60000,
+  });
 
+  wait(1);
+
+  let frame: any | null;
+
+  try {
+    await page.waitForFunction(
+      () => document.querySelector("#entryIframe") !== null,
+      { timeout: 60000 }
+    );
+
+    const iframeHandle: any | null = await page.$("#entryIframe");
+    if (!iframeHandle) {
+      throw new Error("iframe element not found.");
+    }
+
+    frame = await iframeHandle.contentFrame();
+  } catch {
+    console.log(searchPrompt + " iframe not found.");
+    return;
+  }
+
+  await wait(2);
+};
+// get visitors review
 export const getVisitorsReview = async (frame: any) => {
   const arr: any[] = [];
 

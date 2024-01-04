@@ -19,10 +19,13 @@ const scrapeDataSchema = new mongoose.Schema({
   trendingKeywords: [{ type: String }],
 });
 
-const storeSchema = new mongoose.Schema({
-  user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-  scrapeData: scrapeDataSchema,
-});
+const storeSchema = new mongoose.Schema(
+  {
+    user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+    scrapeData: scrapeDataSchema,
+  },
+  { timestamps: true }
+);
 
 const Store = mongoose.models.Store || mongoose.model("Store", storeSchema);
 
