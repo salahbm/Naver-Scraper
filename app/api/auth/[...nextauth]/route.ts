@@ -82,6 +82,20 @@ export const authOptions: any = {
         }
       }
     },
+    async jwt(token: any, user: AuthUser) {
+      // Adjust the expiration time to 1 hour (in seconds)
+      if (user) {
+        token.exp = Math.floor(Date.now() / 1000) + 60 * 60; // 1 hour
+      }
+      return token;
+    },
+  },
+  pages: {
+    signIn: "/pages/sign-in",
+  },
+  session: {
+    jwt: true,
+    maxAge: 60 * 60, // 1 hour
   },
 };
 
