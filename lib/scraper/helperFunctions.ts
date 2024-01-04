@@ -14,8 +14,6 @@ export const getIframeFromSearch = async (searchPrompt: string) => {
     timeout: 60000,
   });
 
-  wait(1);
-
   let searchFrame: any | null;
 
   try {
@@ -53,7 +51,6 @@ export const getIframeFromSearch = async (searchPrompt: string) => {
     });
   });
 
-  console.log(liElements);
   return liElements;
 };
 // get visitors review

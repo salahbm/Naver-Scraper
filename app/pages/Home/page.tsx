@@ -63,7 +63,7 @@ const Home = () => {
       </section>
 
       <section className="trending-section">
-        <h2 className="section-text">Searched Restaurants</h2>
+        <h2 className="section-text">Searched Brands</h2>
 
         <div className="flex flex-wrap gap-x-8 gap-y-2">
           {stores.length > 0 ? (

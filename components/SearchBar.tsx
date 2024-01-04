@@ -21,12 +21,18 @@ const isValidNaverProductUrl = (searchName: string): boolean => {
     return false;
   }
 };
-
 const extractNumericDistance = (distance: string) => {
   const match = distance.match(/(\d+(\.\d+)?)/);
-  return match ? `${match[1]} km` : "";
-};
+  const numericValue = match ? parseFloat(match[1]) : null;
 
+  if (numericValue !== null) {
+    // Check if the original distance contains 'km' or 'm' and format accordingly
+    const isKilometers = distance.toLowerCase().includes("km");
+    return isKilometers ? `${numericValue} km` : `${numericValue} m`;
+  }
+
+  return "";
+};
 const SearchBar = () => {
   const [searchPrompt, setSearchPrompt] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -34,11 +40,11 @@ const SearchBar = () => {
   const [searchedResults, setSearchedResults] = useState([]);
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // const isValidLink = isValidNaverProductUrl(searchPrompt);
-    // if (!isValidLink)
-    //   return alert(
-    //     "Please provide Restaurant name and location, EX: '써브웨이 낙성대점'"
-    //   );
+    const isValidLink = isValidNaverProductUrl(searchPrompt);
+    if (!isValidLink)
+      return alert(
+        "Please provide Restaurant name and location, EX: '써브웨이 낙성대점'"
+      );
     // Scrap the product
     try {
       setIsLoading(true);
@@ -61,13 +67,13 @@ const SearchBar = () => {
   };
 
   return (
-    <div className=" flex flex-col">
+    <div className=" flex flex-col gap-2">
       <form className="flex flex-wrap gap-4 mt-12" onSubmit={handleSubmit}>
         <input
           type="text"
           value={searchPrompt}
           onChange={(e) => setSearchPrompt(e.target.value)}
-          placeholder="Enter Restaurant and Branch name"
+          placeholder="써브웨이 낙성대점 | 말똥도넛 파주"
           className="searchbar-input"
         />
 
@@ -79,8 +85,9 @@ const SearchBar = () => {
           {isLoading ? "Searching..." : "Search"}
         </button>
       </form>
+      <p className="text-neutral-600 font-bold mx-1">Scroll Up 📜</p>
       <div
-        className={`w-full h-[350px] overflow-auto border px-4 p-2 m-1 rounded-md ${
+        className={`w-full  max-h-[350px] min-h-[100px] overflow-auto border px-4 p-2  rounded-md ${
           searchedResults.length === 0 && `hidden`
         }`}
       >
@@ -99,7 +106,7 @@ const SearchBar = () => {
               </div>
               <div className="flex-between">
                 <p className="text-gray-700">{item.location}</p>
-                <p className="text-gray-800 font-bold">
+                <p className="text-gray-800 font-semibold">
                   {extractNumericDistance(item.distance)}
                 </p>
               </div>
