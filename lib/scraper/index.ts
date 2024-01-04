@@ -15,7 +15,7 @@ export async function scrapeNaverData(searchName: string): Promise<any> {
   // await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36');
   // await page.setViewport({ width: 1920, height: 1080 });
   // await page.goto("https://map.naver.com/v5/search/" + searchName, { waitUntil: 'domcontentloaded', timeout: 60000 });
-  await getIframeFromSearch(page, searchName);
+
   await wait(1);
 
   let frame: any | null;

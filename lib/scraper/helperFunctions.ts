@@ -1,6 +1,9 @@
-import { Page } from "puppeteer";
+"use server";
+import puppeteer, { Page } from "puppeteer";
 // get chosen iframe
-export const getIframeFromSearch = async (page: Page, searchPrompt: string) => {
+export const getIframeFromSearch = async (searchPrompt: string) => {
+  const browser = await puppeteer.launch({ headless: false });
+  const page = await browser.newPage();
   if (!page) return;
   await page.setUserAgent(
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
@@ -38,17 +41,20 @@ export const getIframeFromSearch = async (page: Page, searchPrompt: string) => {
       const titleElement = li.querySelector("span.TYaxT");
       const locationElement = li.querySelector("span.Pb4bU");
       const typeElement = li.querySelector("span.KCMnt");
+      const distanceElement = li.querySelector("span.lWwyx.NVngW");
 
       const link = linkElement?.getAttribute("href") || "";
       const title = titleElement?.textContent || "";
       const location = locationElement?.textContent || "";
       const type = typeElement?.textContent || "";
+      const distance = distanceElement?.textContent || "";
 
-      return { link, title, location, type };
+      return { link, title, location, type, distance };
     });
   });
 
   console.log(liElements);
+  return liElements;
 };
 // get visitors review
 export const getVisitorsReview = async (frame: any) => {
