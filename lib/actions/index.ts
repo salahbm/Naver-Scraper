@@ -30,8 +30,8 @@ export async function scrapeAndStoreProduct(
     console.log("Started storing in the DB");
 
     await connectDB();
-    const blogReview = parseInt(scrapeData.blogReview, 10) || 0;
-    const visitorReview = parseInt(scrapeData.visitorsReview, 10) || 0;
+    // const blogReview = parseInt(scrapeData.blogReview, 10) || 0;
+    // const visitorReview = parseInt(scrapeData.visitorsReview, 10) || 0;
 
     const socialLinks = scrapeData.socialLinks ? scrapeData.socialLinks : [];
 
@@ -51,15 +51,15 @@ export async function scrapeAndStoreProduct(
         address: scrapeData.address,
         phone: scrapeData.phone,
         socialLinks: socialLinks,
-        visitorsReview: visitorReview.toString(),
-        blogReview: blogReview.toString(),
+        visitorsReview: scrapeData.visitorsReview,
+        blogReview: scrapeData.blogReview,
         reviews: Array.isArray(scrapeData.reviews) ? scrapeData.reviews : [],
         trendingKeywords: Array.isArray(scrapeData.trendingKeywords)
           ? scrapeData.trendingKeywords
           : [],
       },
     });
-    console.log(`Saved in DB`, newStore?.scrapeData?.name);
+    console.log(`Saved in DB`, newStore);
 
     revalidatePath(`/pages/products/${newStore?._id}`);
   } catch (error: any) {
@@ -79,7 +79,7 @@ export async function getAllStores(email: string) {
     }
 
     // Find stores that match the provided user email
-    const stores = await Store.find({ user: user._id });
+    const stores = await Store.find();
 
     if (stores.length === 0) {
       console.log(`No stores found for the user with email: ${user._id}`);

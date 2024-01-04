@@ -11,7 +11,7 @@ export async function saveUsers(users: UserType) {
   if (!users) return;
   let newUser;
   try {
-    await connectDB(); // Connect to the database
+    await connectDB();
 
     const existingUser = await User.findOne({ _id: users._id });
 
