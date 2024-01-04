@@ -5,17 +5,17 @@ import { scrapeNaverData } from "../scraper";
 import { revalidatePath } from "next/cache";
 import Store from "../model/store.model";
 import mongoose from "mongoose";
-import { UserType } from "@/types";
+import User from "../model/user.model";
 
 export async function scrapeAndStoreProduct(
   restaurantUrl: string,
-  user: UserType
+  email: string
 ) {
-  if (!restaurantUrl && !user?._id) return;
+  if (!restaurantUrl && !email) return;
 
   try {
     const scrapeData = await scrapeNaverData(restaurantUrl);
-    console.log(`file: index.ts:58 ~ scrapeData:`, scrapeData);
+    console.log(`file: index.ts:58 ~ scrapeData:`, scrapeData?.name);
 
     if (
       !scrapeData ||
@@ -35,6 +35,13 @@ export async function scrapeAndStoreProduct(
 
     const socialLinks = scrapeData.socialLinks ? scrapeData.socialLinks : [];
 
+    // Assuming you have a User model
+    const user = await User.findOne({ email });
+    if (!user) {
+      console.log("User not found with email:", email);
+      return;
+    }
+
     const newStore = await Store.create({
       user: user._id,
       scrapeData: {
@@ -52,7 +59,7 @@ export async function scrapeAndStoreProduct(
           : [],
       },
     });
-    console.log("Scraped Data is Stored", newStore?._id);
+    console.log(`Saved in DB`, newStore?.scrapeData?.name);
 
     revalidatePath(`/pages/products/${newStore?._id}`);
   } catch (error: any) {
@@ -60,19 +67,29 @@ export async function scrapeAndStoreProduct(
   }
 }
 
-export async function getAllStores() {
+// Update the getAllStores function to accept a user email parameter
+export async function getAllStores(email: string) {
   try {
     await connectDB();
-    const stores = await Store.find();
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      console.log("User not found with email:", email);
+      return [];
+    }
+
+    // Find stores that match the provided user email
+    const stores = await Store.find({ user: user._id });
 
     if (stores.length === 0) {
-      console.log("No stores found in the collection.");
-      return;
+      console.log(`No stores found for the user with email: ${user._id}`);
+      return [];
     } else {
       return stores;
     }
   } catch (error: any) {
     console.log(error.message);
+    throw new Error(`Failed to get stores: ${error.message}`);
   }
 }
 

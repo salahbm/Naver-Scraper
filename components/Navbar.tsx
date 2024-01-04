@@ -6,7 +6,6 @@ import { Button } from "./ui/button";
 
 const Navbar = () => {
   const { data: session }: any = useSession();
-  console.log(`file: Navbar.tsx:9 ~ session:`, session);
   return (
     <header className="w-full">
       <nav className="nav">

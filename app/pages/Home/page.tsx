@@ -1,10 +1,41 @@
+"use client";
 import RestaurantCard from "@/components/RestaurantCard";
 import SearchBar from "@/components/SearchBar";
 import { getAllStores } from "@/lib/actions";
-import Image from "next/image";
+import { RestaurantCardProps } from "@/types";
+import { useSession } from "next-auth/react";
 
-const Home = async () => {
-  const restaurants = await getAllStores();
+import Image from "next/image";
+import { useEffect, useState } from "react";
+
+interface Props {
+  scrapeData: RestaurantCardProps;
+  restaurants: { scrapeData: RestaurantCardProps }[];
+}
+
+const Home = () => {
+  const { data: session } = useSession();
+  const [stores, setStores] = useState<Props[]>([]);
+  console.log(`file: page.tsx:19 ~ stores:`, stores);
+
+  useEffect(() => {
+    const fetchStores = async () => {
+      try {
+        if (session?.user?.email) {
+          const getStores = await getAllStores(session.user.email);
+          setStores(getStores);
+        } else {
+          console.error("User email not available in the session.");
+        }
+      } catch (error: any) {
+        console.error(`Failed to fetch stores: ${error.message}`);
+      }
+    };
+
+    if (session?.user?.email) {
+      fetchStores();
+    }
+  }, [session?.user?.email]);
 
   return (
     <>
@@ -35,9 +66,9 @@ const Home = async () => {
         <h2 className="section-text">Searched Restaurants</h2>
 
         <div className="flex flex-wrap gap-x-8 gap-y-2">
-          {restaurants ? (
-            restaurants?.map((product, index) => (
-              <RestaurantCard data={product.scrapeData} key={index} />
+          {stores.length > 0 ? (
+            stores?.map((product, index) => (
+              <RestaurantCard key={index} data={product.scrapeData} />
             ))
           ) : (
             <p className="text-center font-semibold text-lg text-neutral-700">

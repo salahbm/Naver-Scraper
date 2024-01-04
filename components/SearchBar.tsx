@@ -1,5 +1,6 @@
 "use client";
 import { scrapeAndStoreProduct } from "@/lib/actions";
+import { useSession } from "next-auth/react";
 import React, { FormEvent, useState } from "react";
 
 const isValidNaverProductUrl = (searchName: string): boolean => {
@@ -23,6 +24,7 @@ const isValidNaverProductUrl = (searchName: string): boolean => {
 const SearchBar = () => {
   const [searchPrompt, setSearchPrompt] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const { data: session }: any = useSession();
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const isValidLink = isValidNaverProductUrl(searchPrompt);
@@ -34,7 +36,12 @@ const SearchBar = () => {
     try {
       setIsLoading(true);
 
-      await scrapeAndStoreProduct(searchPrompt);
+      if (session && session.user && session.user.email) {
+        await scrapeAndStoreProduct(searchPrompt, session.user.email);
+      } else {
+        // Handle the case when session or user is undefined
+        console.log("User email not available in the session.");
+      }
     } catch (error) {
       console.log(error);
     } finally {
@@ -55,7 +62,7 @@ const SearchBar = () => {
       <button
         type="submit"
         className="searchbar-btn"
-        disabled={searchPrompt === ""}
+        disabled={!session?.user?.email}
       >
         {isLoading ? "Searching..." : "Search"}
       </button>
