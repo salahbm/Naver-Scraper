@@ -2,17 +2,15 @@ import { getStoreById } from "@/lib/actions";
 import { RestaurantCardProps } from "@/types";
 import { redirect } from "next/navigation";
 
-import { FC, useEffect, useState } from "react";
-
 interface pageProps {
   params: { id: string };
 }
-const ProductDetails: FC<pageProps> = async ({ params }) => {
+const ProductDetails = async ({ params }: pageProps) => {
   console.log(`file: page.tsx:11 ~ params:`, params.id);
   const product: RestaurantCardProps = await getStoreById(params.id);
   console.log(`file: page.tsx:13 ~ product:`, product);
 
-  // if (!product) redirect("/");
+  if (!product) redirect("/");
 
   return (
     <section className="max-w-[1240px] mx-auto rounded-lg " key={params.id}>
