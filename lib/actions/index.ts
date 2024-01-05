@@ -61,7 +61,7 @@ export async function scrapeAndStoreProduct(
       },
     });
     console.log(`Saved in DB`, newStore);
-    alert(`The Brand ${newStore?.scrapeData.name} is successfully added`);
+    // alert(`Successfully ${newStore.scrapeData.name} added ✅`);
     revalidatePath(`/pages/products/${newStore?._id}`);
   } catch (error: any) {
     throw new Error(`Failed to create/update product: ${error.message}`);

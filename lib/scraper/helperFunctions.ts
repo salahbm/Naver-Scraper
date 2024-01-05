@@ -186,7 +186,7 @@ export const getKeywords = async (page: Page, searchPrompt: string) => {
   // Wait for the related keywords section
   const relatedSearch = await page.waitForSelector(
     "#nx_right_related_keywords",
-    { timeout: 10000 }
+    { timeout: 5000 }
   );
 
   let keywords: string[] = [];

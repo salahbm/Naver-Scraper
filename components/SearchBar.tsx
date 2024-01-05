@@ -34,11 +34,15 @@ const extractNumericDistance = (distance: string) => {
   return "";
 };
 const SearchBar = () => {
-  const [searchPrompt, setSearchPrompt] = useState("");
-  const [selectedStore, setSelectedResult] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
   const { data: session }: any = useSession();
+
+  // states
+  const [isLoading, setIsLoading] = useState(false);
+  const [searchPrompt, setSearchPrompt] = useState("");
   const [searchedResults, setSearchedResults] = useState([]);
+
+  // functions
+
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const isValidLink = isValidNaverProductUrl(searchPrompt);
@@ -62,19 +66,19 @@ const SearchBar = () => {
   };
 
   const handleScrapeFromNaver = async (url: string) => {
-    setSelectedResult(url);
+    console.log(`file: SearchBar.tsx:70 ~ url:`, url);
+    if (!url) return;
+    setIsLoading(true);
     try {
-      if (session && session.user.email && selectedStore != "") {
-        await scrapeAndStoreProduct(
-          searchPrompt,
-          session.user.email,
-          selectedStore
-        );
+      if (session && session.user.email && url != "") {
+        await scrapeAndStoreProduct(searchPrompt, session.user.email, url);
+      } else {
+        console.log("Error in selecting Brand or Email");
       }
     } catch (error: any) {
       console.log(`file: SearchBar.tsx:77 ~ error:`, error.message);
     } finally {
-      setSelectedResult("");
+      setIsLoading(false);
     }
   };
 
@@ -101,9 +105,29 @@ const SearchBar = () => {
         </button>
       </form>
       <div
+        className={`w-full overflow-auto  p-2  ${
+          isLoading ? "block" : "hidden"
+        }`}
+      >
+        <p className="font-semibold text-neutral-600 animate-pulse">
+          Scraping and Storing data...{" "}
+        </p>
+      </div>
+      {/* <div>
+        {response.status === "success" ? (
+          <p className=" text-lime-500 font-semibold">
+            Successfully Scraped and Stored data...{" "}
+          </p>
+        ) : response.status === "error" ? (
+          <p className=" text-red-600 font-semibold">
+            Error Scraping and Storing data...{" "}
+          </p>
+        ) : null}
+      </div> */}
+      <div
         className={`w-full max-h-[350px] min-h-[100px] overflow-auto border px-4 p-2 rounded-md ${
           searchedResults.length === 0 ? "hidden" : ""
-        }  ${selectedStore !== "" ? "cursor-wait no-pointer-events" : ""}`}
+        }  ${isLoading ? " cursor-not-allowed no-pointer-events" : ""}`}
       >
         <p className="text-neutral-600 font-bold mx-1 border-b ">
           Scroll Up 📜

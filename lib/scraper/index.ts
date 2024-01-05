@@ -13,7 +13,7 @@ export async function scrapeNaverData(
   searchName: string,
   selectedIframe: any
 ): Promise<any> {
-  const browser = await puppeteer.launch({ headless: "new" });
+  const browser = await puppeteer.launch({ headless: false });
   const page = await browser.newPage();
   await page.setUserAgent(
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
@@ -45,12 +45,14 @@ export async function scrapeNaverData(
   }
 
   await searchFrame.waitForSelector(selectedIframe);
+  await wait(1);
   await searchFrame.click(selectedIframe);
+  if (searchFrame) {
+    await searchFrame.click(selectedIframe);
+  }
   await wait(1);
   let frame: any | null;
-  const timer = setTimeout(() => {
-    browser.close();
-  }, 5000);
+
   try {
     await page.waitForFunction(
       () => document.querySelector("#entryIframe") !== null,
@@ -63,7 +65,6 @@ export async function scrapeNaverData(
     }
 
     frame = await iframeHandle.contentFrame();
-    clearTimeout(timer);
   } catch {
     console.log(searchName + " iframe not found.");
     browser.close();
