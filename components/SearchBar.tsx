@@ -35,6 +35,7 @@ const extractNumericDistance = (distance: string) => {
 };
 const SearchBar = () => {
   const [searchPrompt, setSearchPrompt] = useState("");
+  const [selectedStore, setSelectedResult] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const { data: session }: any = useSession();
   const [searchedResults, setSearchedResults] = useState([]);
@@ -43,18 +44,12 @@ const SearchBar = () => {
     const isValidLink = isValidNaverProductUrl(searchPrompt);
     if (!isValidLink)
       alert(
-        "Please provide Restaurant name and location, EX: '써브웨이 낙성대점'"
+        "Please provide brand name and location for better result, EX: '써브웨이 낙성대점'"
       );
     // Scrap the product
     try {
       setIsLoading(true);
 
-      // if (session && session.user && session.user.email) {
-      //   await scrapeAndStoreProduct(searchPrompt, session.user.email);
-      // } else {
-      //   // Handle the case when session or user is undefined
-      //   console.log("User email not available in the session.");
-      // }
       const getResults: any = await getIframeFromSearch(searchPrompt);
       if (getResults) {
         setSearchedResults(getResults);
@@ -66,14 +61,31 @@ const SearchBar = () => {
     }
   };
 
+  const handleScrapeFromNaver = async (url: string) => {
+    setSelectedResult(url);
+    if (session && session.user.email && selectedStore != "") {
+      await scrapeAndStoreProduct(
+        searchPrompt,
+        session.user.email,
+        selectedStore
+      );
+    } else {
+      // Handle the case when session or user is undefined
+      console.log("User email not available in the session.");
+    }
+  };
+
   return (
     <div className=" flex flex-col gap-2">
-      <form className="flex flex-wrap gap-4 mt-12" onSubmit={handleSubmit}>
+      <form
+        className="flex flex-wrap gap-4 mt-12 border-b pb-2"
+        onSubmit={handleSubmit}
+      >
         <input
           type="text"
           value={searchPrompt}
           onChange={(e) => setSearchPrompt(e.target.value)}
-          placeholder="써브웨이 낙성대점 | 말똥도넛 파주"
+          placeholder="Search Ex: 말똥도넛 파주"
           className="searchbar-input"
         />
 
@@ -85,26 +97,23 @@ const SearchBar = () => {
           {isLoading ? "Searching..." : "Search"}
         </button>
       </form>
-      <p className="text-neutral-600 font-bold mx-1">Scroll Up 📜</p>
       <div
         className={`w-full  max-h-[350px] min-h-[100px] overflow-auto border px-4 p-2  rounded-md ${
           searchedResults.length === 0 && `hidden`
         }`}
       >
+        <p className="text-neutral-600 font-bold mx-1 border-b ">
+          Scroll Up 📜
+        </p>
         <ul>
           {searchedResults.map((item: any, index: number) => (
             <li
+              onClick={() => handleScrapeFromNaver(item.linkSelector)}
               key={index}
-              className="mb-4 cursor-pointer hover:bg-neutral-100 border-b p-1 border-md"
+              className="mb-2 cursor-pointer hover:bg-neutral-100 border-b p-1 border-md"
             >
               <div className="flex-between">
-                <a
-                  href={item.link}
-                  target="_blank"
-                  className="text-blue-500 font-bold"
-                >
-                  {item.title}
-                </a>
+                <p className="text-blue-500 font-bold">{item.title}</p>
                 <p className="text-green-500">{item.type}</p>
               </div>
               <div className="flex-between">

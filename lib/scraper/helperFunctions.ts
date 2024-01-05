@@ -48,23 +48,27 @@ export const getIframeFromSearch = async (searchPrompt: string) => {
   for (let i = 0; i < 5; i++) {
     await scrollDiv();
     liElements = await searchFrame.$$eval("li", (lis: any) => {
-      return lis.map((li: any) => {
-        const linkElement = li.querySelector("a.tzwk0");
+      return lis.map((li: any, index: number) => {
+        const linkSelector = `#_pcmap_list_scroll_container > ul > li:nth-child(${
+          index + 1
+        }) > div.CHC5F > a.tzwk0`;
+
         const titleElement = li.querySelector("span.TYaxT");
         const locationElement = li.querySelector("span.Pb4bU");
         const typeElement = li.querySelector("span.KCMnt");
         const distanceElement = li.querySelector("span.lWwyx.NVngW");
 
-        const link = linkElement?.getAttribute("href") || "";
         const title = titleElement?.textContent || "";
         const location = locationElement?.textContent || "";
         const type = typeElement?.textContent || "";
         const distance = distanceElement?.textContent || "";
 
-        return { link, title, location, type, distance };
+        return { title, location, type, distance, linkSelector };
       });
     });
   }
+
+  console.log(`file: helperFunctions.ts:74 ~ liElements:`, liElements);
   browser.close();
   return liElements;
 };

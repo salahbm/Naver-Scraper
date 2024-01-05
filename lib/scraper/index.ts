@@ -9,15 +9,44 @@ import {
   wait,
 } from "./helperFunctions";
 
-export async function scrapeNaverData(searchName: string): Promise<any> {
+export async function scrapeNaverData(
+  searchName: string,
+  selectedIframe: any
+): Promise<any> {
   const browser = await puppeteer.launch({ headless: false });
   const page = await browser.newPage();
-  // await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36');
-  // await page.setViewport({ width: 1920, height: 1080 });
-  // await page.goto("https://map.naver.com/v5/search/" + searchName, { waitUntil: 'domcontentloaded', timeout: 60000 });
+  await page.setUserAgent(
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+  );
+  await page.setViewport({ width: 1920, height: 1080 });
+  await page.goto("https://map.naver.com/v5/search/" + searchName, {
+    waitUntil: "domcontentloaded",
+    timeout: 60000,
+  });
 
   await wait(1);
+  let searchFrame: any | null;
 
+  try {
+    await page.waitForFunction(
+      () => document.querySelector("#searchIframe") !== null,
+      { timeout: 60000 }
+    );
+
+    const iframeHandle: any | null = await page.$("#searchIframe");
+    if (!iframeHandle) {
+      throw new Error("iframe element not found.");
+    }
+
+    searchFrame = await iframeHandle.contentFrame();
+  } catch (error) {
+    console.log(searchName + " iframe not found.", error);
+    return;
+  }
+
+  await searchFrame.waitForSelector(selectedIframe);
+  await searchFrame.click(selectedIframe);
+  await wait(1);
   let frame: any | null;
   const timer = setTimeout(() => {
     browser.close();

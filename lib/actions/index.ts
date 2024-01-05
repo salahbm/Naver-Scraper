@@ -8,13 +8,14 @@ import mongoose from "mongoose";
 import User from "../model/user.model";
 
 export async function scrapeAndStoreProduct(
-  restaurantUrl: string,
-  email: string
+  storeName: string,
+  email: string,
+  selectedIframe: string
 ) {
-  if (!restaurantUrl && !email) return;
+  if (!storeName && !email) return;
 
   try {
-    const scrapeData = await scrapeNaverData(restaurantUrl);
+    const scrapeData = await scrapeNaverData(storeName, selectedIframe);
     console.log(`file: index.ts:58 ~ scrapeData:`, scrapeData?.name);
 
     if (
