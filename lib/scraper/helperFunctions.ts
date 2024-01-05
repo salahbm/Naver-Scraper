@@ -33,26 +33,43 @@ export const getIframeFromSearch = async (searchPrompt: string) => {
     return;
   }
 
-  const liElements = await searchFrame.$$eval("li", (lis: any) => {
-    return lis.map((li: any) => {
-      const linkElement = li.querySelector("a.tzwk0");
-      const titleElement = li.querySelector("span.TYaxT");
-      const locationElement = li.querySelector("span.Pb4bU");
-      const typeElement = li.querySelector("span.KCMnt");
-      const distanceElement = li.querySelector("span.lWwyx.NVngW");
-
-      const link = linkElement?.getAttribute("href") || "";
-      const title = titleElement?.textContent || "";
-      const location = locationElement?.textContent || "";
-      const type = typeElement?.textContent || "";
-      const distance = distanceElement?.textContent || "";
-
-      return { link, title, location, type, distance };
+  // Function to scroll the div element
+  const scrollDiv = async () => {
+    await searchFrame.evaluate(() => {
+      const divElement = document.querySelector(".Ryr1F");
+      if (divElement) {
+        divElement.scrollTop += 2000; // Adjust the scroll amount as needed
+      }
     });
-  });
+    await wait(1); // Wait for 1 second after scrolling
+  };
 
+  let liElements;
+  for (let i = 0; i < 5; i++) {
+    await scrollDiv();
+    liElements = await searchFrame.$$eval("li", (lis: any) => {
+      return lis.map((li: any) => {
+        const linkElement = li.querySelector("a.tzwk0");
+        const titleElement = li.querySelector("span.TYaxT");
+        const locationElement = li.querySelector("span.Pb4bU");
+        const typeElement = li.querySelector("span.KCMnt");
+        const distanceElement = li.querySelector("span.lWwyx.NVngW");
+
+        const link = linkElement?.getAttribute("href") || "";
+        const title = titleElement?.textContent || "";
+        const location = locationElement?.textContent || "";
+        const type = typeElement?.textContent || "";
+        const distance = distanceElement?.textContent || "";
+
+        return { link, title, location, type, distance };
+      });
+    });
+  }
+  console.log(`file: helperFunctions.ts:71 ~ liElements:`, liElements);
+  browser.close();
   return liElements;
 };
+
 // get visitors review
 export const getVisitorsReview = async (frame: any) => {
   const arr: any[] = [];

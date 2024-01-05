@@ -38,13 +38,14 @@ const SearchBar = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { data: session }: any = useSession();
   const [searchedResults, setSearchedResults] = useState([]);
+  console.log(`file: SearchBar.tsx:41 ~ searchedResults:`, searchedResults);
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const isValidLink = isValidNaverProductUrl(searchPrompt);
-    if (!isValidLink)
-      return alert(
-        "Please provide Restaurant name and location, EX: '써브웨이 낙성대점'"
-      );
+    // const isValidLink = isValidNaverProductUrl(searchPrompt);
+    // if (!isValidLink)
+    //   return alert(
+    //     "Please provide Restaurant name and location, EX: '써브웨이 낙성대점'"
+    //   );
     // Scrap the product
     try {
       setIsLoading(true);
@@ -55,7 +56,7 @@ const SearchBar = () => {
       //   // Handle the case when session or user is undefined
       //   console.log("User email not available in the session.");
       // }
-      const getResults = await getIframeFromSearch(searchPrompt);
+      const getResults: any = await getIframeFromSearch(searchPrompt);
       if (getResults) {
         setSearchedResults(getResults);
       }
