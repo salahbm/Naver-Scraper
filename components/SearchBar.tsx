@@ -63,15 +63,18 @@ const SearchBar = () => {
 
   const handleScrapeFromNaver = async (url: string) => {
     setSelectedResult(url);
-    if (session && session.user.email && selectedStore != "") {
-      await scrapeAndStoreProduct(
-        searchPrompt,
-        session.user.email,
-        selectedStore
-      );
-    } else {
-      // Handle the case when session or user is undefined
-      console.log("User email not available in the session.");
+    try {
+      if (session && session.user.email && selectedStore != "") {
+        await scrapeAndStoreProduct(
+          searchPrompt,
+          session.user.email,
+          selectedStore
+        );
+      }
+    } catch (error: any) {
+      console.log(`file: SearchBar.tsx:77 ~ error:`, error.message);
+    } finally {
+      setSelectedResult("");
     }
   };
 
@@ -98,9 +101,9 @@ const SearchBar = () => {
         </button>
       </form>
       <div
-        className={`w-full  max-h-[350px] min-h-[100px] overflow-auto border px-4 p-2  rounded-md ${
-          searchedResults.length === 0 && `hidden`
-        }`}
+        className={`w-full max-h-[350px] min-h-[100px] overflow-auto border px-4 p-2 rounded-md ${
+          searchedResults.length === 0 ? "hidden" : ""
+        }  ${selectedStore !== "" ? "cursor-wait no-pointer-events" : ""}`}
       >
         <p className="text-neutral-600 font-bold mx-1 border-b ">
           Scroll Up 📜

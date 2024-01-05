@@ -2,7 +2,7 @@
 import puppeteer, { Page } from "puppeteer";
 // get chosen iframe
 export const getIframeFromSearch = async (searchPrompt: string) => {
-  const browser = await puppeteer.launch({ headless: false });
+  const browser = await puppeteer.launch({ headless: "new" });
   const page = await browser.newPage();
   if (!page) return;
   await page.setUserAgent(
