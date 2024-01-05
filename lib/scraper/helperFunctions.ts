@@ -65,7 +65,6 @@ export const getIframeFromSearch = async (searchPrompt: string) => {
       });
     });
   }
-  console.log(`file: helperFunctions.ts:71 ~ liElements:`, liElements);
   browser.close();
   return liElements;
 };

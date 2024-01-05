@@ -22,7 +22,7 @@ const Navbar = () => {
           </p>
         </Link>
 
-        <div className="flex items-center justify-center">
+        <div className="flex-between">
           {!session ? (
             <Link href="/pages/sign-in">
               <Image
@@ -34,8 +34,13 @@ const Navbar = () => {
               />
             </Link>
           ) : (
-            <>
-              {session.user?.email}
+            <div className="flex-center">
+              <span
+                id="emailSpan"
+                className="text-neutral-700 font-semibold md:w-full w-[100px] overflow-hidden overflow-ellipsis"
+              >
+                {session.user?.email}
+              </span>
               <Button
                 className="mx-1 text-white"
                 type="button"
@@ -44,7 +49,7 @@ const Navbar = () => {
               >
                 Log Out
               </Button>
-            </>
+            </div>
           )}
         </div>
       </nav>
