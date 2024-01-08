@@ -1,6 +1,5 @@
 import { getStoreById } from "@/lib/actions";
 import { RestaurantCardProps } from "@/types";
-import { redirect } from "next/navigation";
 
 const ProductNotAvailableNotice = () => (
   <div className="flex items-center justify-center h-screen">
@@ -13,7 +12,6 @@ interface pageProps {
 }
 const ProductDetails = async ({ params }: pageProps) => {
   const product: RestaurantCardProps = await getStoreById(params.id);
-  if (!product) redirect("/");
 
   return (
     <>
