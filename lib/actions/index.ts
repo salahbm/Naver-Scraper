@@ -98,9 +98,8 @@ export async function getStoreById(storeId: string) {
     if (!mongoose.Types.ObjectId.isValid(storeId)) {
       throw new Error("Invalid ObjectId format");
     }
-    const objectId = new mongoose.Types.ObjectId(storeId);
 
-    const store = await Store.findOne({ _id: objectId });
+    const store = await Store.findOne({ _id: storeId });
 
     if (!store) return null;
 

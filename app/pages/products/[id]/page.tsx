@@ -11,7 +11,9 @@ interface pageProps {
   params: { id: string };
 }
 const ProductDetails = async ({ params }: pageProps) => {
+  console.log(`file: page.tsx:14 ~ params:`, params.id);
   const product: RestaurantCardProps = await getStoreById(params.id);
+  console.log(`file: page.tsx:15 ~ product:`, product);
 
   return (
     <>
