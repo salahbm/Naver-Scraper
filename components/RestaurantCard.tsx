@@ -1,15 +1,19 @@
 import { RestaurantCardProps } from "@/types";
+import { RestaurantProps } from "@/types";
 import Link from "next/link";
 import React from "react";
 
 interface Props {
+  keyId: string;
   data: RestaurantCardProps;
 }
 
-const RestaurantCard = ({ data }: Props) => {
+const RestaurantCard = ({ keyId, data }: Props) => {
+  console.log(`RestaurantCard.tsx ~ data:`, data);
+
   if (!data) return;
   return (
-    <Link href={`/pages/products/${data?._id}`}>
+    <Link href={`/pages/products/${keyId}`}>
       <div className="max-w-lg  mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
         <img
           className="w-full h-64 object-cover object-center"

@@ -9,6 +9,7 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 
 interface Props {
+  _id: string;
   scrapeData: RestaurantCardProps;
   restaurants: { scrapeData: RestaurantCardProps }[];
 }
@@ -23,6 +24,7 @@ const Home = () => {
       try {
         if (session?.user?.email) {
           const getStores = await getAllStores(session.user.email);
+          console.log(getStores);
           setStores(getStores);
         } else {
           console.error("User email not available in the session.");
@@ -68,7 +70,7 @@ const Home = () => {
         <div className="flex flex-wrap gap-x-8 gap-y-2">
           {stores.length > 0 ? (
             stores?.map((product, index) => (
-              <RestaurantCard key={index} data={product.scrapeData} />
+              <RestaurantCard key={index} keyId={product._id} data={product.scrapeData} />
             ))
           ) : (
             <p className="text-center font-semibold text-lg text-neutral-700">

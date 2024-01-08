@@ -1,55 +1,24 @@
-"use client";
-import { Loader } from "@/components/shared/Loader";
-import { Button } from "@/components/ui/button";
 import { getStoreById } from "@/lib/actions";
 import { RestaurantCardProps } from "@/types";
-import Image from "next/image";
-import Link from "next/link";
-import { useEffect, useState } from "react";
+
+const ProductNotAvailableNotice = () => (
+  <div className="flex items-center justify-center h-screen">
+    <p className="text-2xl font-semibold text-red-500">Product not available</p>
+  </div>
+);
 
 interface pageProps {
   params: { id: string };
 }
-
-const ProductNotAvailableNotice = () => (
-  <div className="flex items-center justify-center h-screen flex-col">
-    <p className="text-2xl font-semibold text-red-800">Product not available</p>
-    <Link href={"/"}>
-      <Button type="button" variant={"default"}>
-        Go Back Home
-      </Button>
-    </Link>
-  </div>
-);
-
-const ProductDetails = ({ params }: pageProps) => {
-  const [loading, setLoading] = useState(true);
-  const [product, setProduct] = useState<RestaurantCardProps | null>(null);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        console.log(`file: page.tsx:14 ~ params:`, params.id);
-        const fetchedProduct: RestaurantCardProps = await getStoreById(
-          params.id
-        );
-        console.log(`file: page.tsx:15 ~ product:`, fetchedProduct);
-
-        setProduct(fetchedProduct);
-        setLoading(false);
-      } catch (error) {
-        console.error("Error fetching product:", error);
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [params.id]);
+const ProductDetails = async ({ params }: pageProps) => {
+  console.log(`file: page.tsx:14 ~ params:`, params.id);
+  const temp = await getStoreById(params.id);
+  const product: RestaurantCardProps = temp.scrapeData;
+  console.log(`file: page.tsx:15 ~ product:`, product);
 
   return (
     <>
-      {loading && <Loader />}
-      {!loading && !product ? (
+      {!product ? (
         <ProductNotAvailableNotice />
       ) : (
         <section className="max-w-[1240px] mx-auto rounded-lg " key={params.id}>

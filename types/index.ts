@@ -47,6 +47,14 @@ export type EmailProductInfo = {
   url: string;
 };
 
+export interface RestaurantProps {
+  _id?: string;
+  user?: string;
+  scrapeData?: RestaurantCardProps[];
+  createAt?: string;
+  updateAt?: string;
+}
+
 export interface RestaurantCardProps {
   _id?: string;
   logo?: string;
