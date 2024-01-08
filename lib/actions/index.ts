@@ -95,9 +95,9 @@ export async function getAllStores(email: string) {
 export async function getStoreById(storeId: string) {
   try {
     await connectDB();
-    // if (!mongoose.Types.ObjectId.isValid(storeId)) {
-    //   throw new Error("Invalid ObjectId format");
-    // }
+    if (!mongoose.Types.ObjectId.isValid(storeId)) {
+      throw new Error("Invalid ObjectId format");
+    }
 
     const store = await Store.findOne({ _id: storeId });
     console.log(`file: index.ts:103 ~ store:`, store);
