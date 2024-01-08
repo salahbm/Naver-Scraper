@@ -2,7 +2,6 @@
 
 import { connectDB } from "../database/mongoose";
 import { scrapeNaverData } from "../scraper";
-import { revalidatePath } from "next/cache";
 import Store from "../model/store.model";
 import mongoose from "mongoose";
 import User from "../model/user.model";
@@ -30,11 +29,12 @@ export async function scrapeAndStoreProduct(
     }
     console.log("Started storing in the DB");
 
-    await connectDB();
     // const blogReview = parseInt(scrapeData.blogReview, 10) || 0;
     // const visitorReview = parseInt(scrapeData.visitorsReview, 10) || 0;
 
     const socialLinks = scrapeData.socialLinks ? scrapeData.socialLinks : [];
+
+    await connectDB();
 
     // Assuming you have a User model
     const user = await User.findOne({ email });
@@ -61,8 +61,6 @@ export async function scrapeAndStoreProduct(
       },
     });
     console.log(`Saved in DB`, newStore);
-    // alert(`Successfully ${newStore.scrapeData.name} added ✅`);
-    revalidatePath(`/pages/products/${newStore?._id}`);
   } catch (error: any) {
     throw new Error(`Failed to create/update product: ${error.message}`);
   }

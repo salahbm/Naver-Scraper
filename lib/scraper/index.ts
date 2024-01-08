@@ -13,7 +13,7 @@ export async function scrapeNaverData(
   searchName: string,
   selectedIframe: any
 ): Promise<any> {
-  const browser = await puppeteer.launch({ headless: "new" });
+  const browser = await puppeteer.launch({ headless: false });
   const page = await browser.newPage();
   await page.setUserAgent(
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
@@ -43,14 +43,17 @@ export async function scrapeNaverData(
     console.log(searchName + " iframe not found.", error);
     return;
   }
-
-  await searchFrame.waitForSelector(selectedIframe);
-  await wait(1);
-  await searchFrame.click(selectedIframe);
-  if (searchFrame) {
+  try {
+    await searchFrame.waitForSelector(selectedIframe, { timeout: 2000 });
+    await wait(1);
     await searchFrame.click(selectedIframe);
+    if (searchFrame) {
+      await searchFrame.click(selectedIframe);
+    }
+  } catch (error) {
+    console.log("Only 1 li element");
   }
-  await wait(1);
+
   let frame: any | null;
 
   try {

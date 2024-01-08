@@ -2,7 +2,9 @@
 import { scrapeAndStoreProduct } from "@/lib/actions";
 import { getIframeFromSearch } from "@/lib/scraper/helperFunctions";
 import { useSession } from "next-auth/react";
-import React, { FormEvent, useState } from "react";
+import React, { FormEvent, useEffect, useState } from "react";
+import RestaurantCard from "./RestaurantCard";
+import { RestaurantCardProps } from "@/types";
 
 const isValidNaverProductUrl = (searchName: string): boolean => {
   try {
@@ -66,7 +68,6 @@ const SearchBar = () => {
   };
 
   const handleScrapeFromNaver = async (url: string) => {
-    console.log(`file: SearchBar.tsx:70 ~ url:`, url);
     if (!url) return;
     setIsLoading(true);
     try {
@@ -79,8 +80,22 @@ const SearchBar = () => {
       console.log(`file: SearchBar.tsx:77 ~ error:`, error.message);
     } finally {
       setIsLoading(false);
+      setSearchedResults([]);
     }
   };
+
+  useEffect(() => {
+    if (searchedResults.length === 1) {
+      const link = (searchedResults[0] as any)?.linkSelector;
+      if (link) {
+        (async () => {
+          await handleScrapeFromNaver(link);
+        })();
+      } else {
+        console.log("Link is empty");
+      }
+    }
+  }, [searchedResults]);
 
   return (
     <div className=" flex flex-col gap-2">
@@ -126,8 +141,8 @@ const SearchBar = () => {
       </div> */}
       <div
         className={`w-full max-h-[350px] min-h-[100px] overflow-auto border px-4 p-2 rounded-md ${
-          searchedResults.length === 0 ? "hidden" : ""
-        }  ${isLoading ? " cursor-not-allowed no-pointer-events" : ""}`}
+          searchedResults.length > 1 ? "" : "hidden"
+        }  ${isLoading ? " hidden" : ""}`}
       >
         <p className="text-neutral-600 font-bold mx-1 border-b ">
           Scroll Up 📜
