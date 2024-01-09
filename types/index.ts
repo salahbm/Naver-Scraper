@@ -68,6 +68,7 @@ export interface RestaurantCardProps {
   reviews?: Review[];
   trendingKeywords?: string[];
   menu?: any[] | string;
+  naverKeywords?: NaverKeywordData[];
 }
 
 interface Review {

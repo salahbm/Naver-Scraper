@@ -80,6 +80,27 @@ const ProductDetails = async ({ params }: pageProps) => {
                 ))}
               </ul>
             </div>
+            <h3 className="text-lg font-semibold mb-2 text-naver-green-500">
+              Naver Keywords
+            </h3>
+            <div className="mt-2">
+              <ul>
+                {product?.naverKeywords?.map((keyword, index) => (
+                  <li key={index}>
+                    <p className="text-gray-700">
+                      {keyword.relKeyword}: Monthly PC Qc Count -
+                      {keyword.monthlyPcQcCnt}, Monthly Mobile Qc Count -
+                      {keyword.monthlyMobileQcCnt}
+                    </p>
+                    <p className="text-gray-700">
+                      Monthly Average PC Click Count -
+                      {keyword.monthlyAvePcClkCnt}, Monthly Average Mobile Click
+                      Count - {keyword.monthlyAveMobileClkCnt}
+                    </p>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
         </section>
       )}
