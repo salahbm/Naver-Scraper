@@ -42,8 +42,9 @@ async function getResultFromNaverAd(searchPrompt: string) {
 
     if (response.ok) {
       const data = await response.json();
-      console.log(data);
-      // Handle the API response as needed
+
+      console.log(JSON.parse(data.data));
+      return JSON.parse(data.data);
     } else {
       console.error("Error:", response.status);
       // Handle error status
@@ -60,30 +61,34 @@ const SearchBar = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [searchPrompt, setSearchPrompt] = useState("");
   const [searchedResults, setSearchedResults] = useState([]);
+  const [naverKeywords, setNaverKeywords] = useState([]);
 
   // functions
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // const isValidLink = isValidNaverProductUrl(searchPrompt);
-    // if (!isValidLink)
-    //   alert(
-    //     "Please provide brand name and location for better result, EX: '써브웨이 낙성대점'"
-    //   );
-    // // Scrap the product
-    // try {
-    //   setIsLoading(true);
+    const isValidLink = isValidNaverProductUrl(searchPrompt);
+    if (!isValidLink)
+      alert(
+        "Please provide brand name and location for better result, EX: '써브웨이 낙성대점'"
+      );
 
-    //   const getResults: any = await getIframeFromSearch(searchPrompt);
-    //   if (getResults) {
-    //     setSearchedResults(getResults);
-    //   }
-    // } catch (error) {
-    //   console.log(error);
-    // } finally {
-    //   setIsLoading(false);
-    // }
-    await getResultFromNaverAd(searchPrompt);
+    // get data from Naver
+    const naverData = await getResultFromNaverAd(searchPrompt);
+    setNaverKeywords(naverData);
+    // Scrap the product
+    try {
+      setIsLoading(true);
+
+      const getResults: any = await getIframeFromSearch(searchPrompt);
+      if (getResults) {
+        setSearchedResults(getResults);
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleScrapeFromNaver = async (url: string) => {
@@ -91,7 +96,12 @@ const SearchBar = () => {
     setIsLoading(true);
     try {
       if (session && session.user.email && url != "") {
-        await scrapeAndStoreProduct(searchPrompt, session.user.email, url);
+        await scrapeAndStoreProduct(
+          searchPrompt,
+          session.user.email,
+          url,
+          naverKeywords
+        );
       } else {
         console.log("Error in selecting Brand or Email");
       }

@@ -74,3 +74,14 @@ interface Review {
   type: string;
   count: number;
 }
+export type NaverKeywordData = {
+  relKeyword: string;
+  monthlyPcQcCnt: number;
+  monthlyMobileQcCnt: number;
+  monthlyAvePcClkCnt: number;
+  monthlyAveMobileClkCnt: number;
+  monthlyAvePcCtr: number;
+  monthlyAveMobileCtr: number;
+  plAvgDepth: number;
+  compIdx: string;
+};

@@ -5,12 +5,15 @@ import { scrapeNaverData } from "../scraper";
 import Store from "../model/store.model";
 import mongoose from "mongoose";
 import User from "../model/user.model";
+import { NaverKeywordData } from "@/types";
 
 export async function scrapeAndStoreProduct(
   storeName: string,
   email: string,
-  selectedIframe: string
+  selectedIframe: string,
+  naverKeywords: NaverKeywordData[]
 ) {
+  console.log(`file: index.ts:16 ~ naverKeywords:`, naverKeywords);
   if (!storeName && !email) return;
 
   try {
@@ -58,6 +61,7 @@ export async function scrapeAndStoreProduct(
         trendingKeywords: Array.isArray(scrapeData.trendingKeywords)
           ? scrapeData.trendingKeywords
           : [],
+        naverKeywords: Array.isArray(naverKeywords) ? naverKeywords : [],
       },
     });
     console.log(`Saved in DB`, newStore);

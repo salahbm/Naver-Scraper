@@ -1,3 +1,4 @@
+// store.model.js
 import mongoose from "mongoose";
 
 const reviewSchema = new mongoose.Schema({
@@ -27,7 +28,8 @@ const scrapeDataSchema = new mongoose.Schema({
   visitorsReview: { type: String },
   blogReview: { type: String },
   reviews: [reviewSchema],
-  trendingKeywords: [keywordSchema],
+  trendingKeywords: [{ type: String }],
+  naverKeywords: [keywordSchema],
 });
 
 const storeSchema = new mongoose.Schema(

@@ -16,9 +16,7 @@ export async function GET(req: NextRequest) {
     const api_url = "/keywordstool";
     const timestamp = new Date().valueOf().toString();
 
-    console.log(`file: route.ts:18 ~ timestamp:`, timestamp);
-
-    // Check if hintKeywords exists in req.query
+    // Check if hintKeywords exists in req.url
     const keyword: string = req.url.split("?")[1].split("=")[1];
 
     if (!keyword) {
@@ -29,13 +27,9 @@ export async function GET(req: NextRequest) {
     }
 
     // Create the HMAC-SHA256 hash
-    var hmac = CryptoJS.algo.HMAC.create(CryptoJS.algo.SHA256, API_SECRET);
+    const hmac = CryptoJS.algo.HMAC.create(CryptoJS.algo.SHA256, API_SECRET);
     hmac.update(timestamp + "." + method + "." + api_url);
-    var hash = hmac.finalize();
-    console.log(
-      `file: route.ts:35 ~ hash:`,
-      hash.toString(CryptoJS.enc.Base64)
-    );
+    const hash = hmac.finalize();
 
     const requestOptions = {
       headers: {
