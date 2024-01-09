@@ -1,11 +1,11 @@
-import { createHmac } from "crypto";
 import { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
+import CryptoJS from "crypto-js";
 
 export async function GET(req: NextRequest) {
-  const { CUSTOMER_ID, ACCESS_LICENSE, SECRET_KEY } = process.env;
-
-  if (!CUSTOMER_ID || !ACCESS_LICENSE || !SECRET_KEY) {
+  const { CUSTOMER_ID, API_KEY, API_SECRET } = process.env;
+  const method = "GET";
+  if (!CUSTOMER_ID || !API_KEY || !API_SECRET) {
     return NextResponse.json(
       { error: "Credentials are missing" },
       { status: 500 }
@@ -14,7 +14,9 @@ export async function GET(req: NextRequest) {
 
   try {
     const api_url = "/keywordstool";
-    const timestamp = Date.now().toString();
+    const timestamp = new Date().valueOf().toString();
+
+    console.log(`file: route.ts:18 ~ timestamp:`, timestamp);
 
     // Check if hintKeywords exists in req.query
     const keyword: string = req.url.split("?")[1].split("=")[1];
@@ -27,25 +29,26 @@ export async function GET(req: NextRequest) {
     }
 
     // Create the HMAC-SHA256 hash
-    const hmac = createHmac("sha256", SECRET_KEY);
-    hmac.update(`${timestamp}.${api_url}.${keyword}`);
-    console.log("Timestamp:", timestamp);
-    console.log("API URL:", api_url);
-    console.log("Keyword:", keyword);
-    console.log("Generated Signature:", hmac.digest("base64"));
+    var hmac = CryptoJS.algo.HMAC.create(CryptoJS.algo.SHA256, API_SECRET);
+    hmac.update(timestamp + "." + method + "." + api_url);
+    var hash = hmac.finalize();
+    console.log(
+      `file: route.ts:35 ~ hash:`,
+      hash.toString(CryptoJS.enc.Base64)
+    );
 
     const requestOptions = {
       headers: {
         "X-Timestamp": timestamp,
-        "X-API-KEY": ACCESS_LICENSE,
-        "X-API-SECRET": SECRET_KEY,
+        "X-API-KEY": API_KEY,
+        "X-API-SECRET": API_SECRET,
         "X-CUSTOMER": CUSTOMER_ID,
-        "X-Signature": hmac.digest("base64"),
+        "X-Signature": hash.toString(CryptoJS.enc.Base64),
       },
     };
 
     const response = await fetch(
-      `https://api.naver.com/${api_url}?hintKeywords=${keyword}&showDetail=1`,
+      `https://api.naver.com/keywordstool?hintKeywords=${keyword}&showDetail=1`,
       requestOptions
     );
 

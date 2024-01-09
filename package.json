@@ -19,6 +19,7 @@
     "cheerio": "^1.0.0-rc.12",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
+    "crypto-js": "^4.2.0",
     "lucide-react": "^0.302.0",
     "mongoose": "^8.0.3",
     "next": "14.0.4",
@@ -36,6 +37,7 @@
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
+    "@types/crypto-js": "^4.2.1",
     "@types/node": "^20",
     "@types/nodemailer": "^6.4.14",
     "@types/react": "^18",
