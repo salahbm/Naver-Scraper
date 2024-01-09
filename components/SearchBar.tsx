@@ -33,6 +33,26 @@ const extractNumericDistance = (distance: string) => {
 
   return "";
 };
+
+async function getResultFromNaverAd(searchPrompt: string) {
+  try {
+    const response = await fetch(
+      `/api/naver-ad?hintKeywords=${encodeURIComponent(searchPrompt)}`
+    );
+
+    if (response.ok) {
+      const data = await response.json();
+      console.log(data);
+      // Handle the API response as needed
+    } else {
+      console.error("Error:", response.status);
+      // Handle error status
+    }
+  } catch (error) {
+    console.error("Error:", error);
+    // Handle other errors
+  }
+}
 const SearchBar = () => {
   const { data: session }: any = useSession();
 
@@ -63,7 +83,7 @@ const SearchBar = () => {
     // } finally {
     //   setIsLoading(false);
     // }
-    await getResultFromNaverAd();
+    await getResultFromNaverAd(searchPrompt);
   };
 
   const handleScrapeFromNaver = async (url: string) => {
@@ -82,21 +102,6 @@ const SearchBar = () => {
       setSearchedResults([]);
     }
   };
-
-  async function getResultFromNaverAd() {
-    try {
-      const response = await fetch(
-        `/api/naver-ad?hintKeywords=${searchPrompt}`
-      );
-      const data = await response.json();
-
-      console.log(data);
-      // Handle the API response as needed
-    } catch (error) {
-      console.error("Error:", error);
-      // Handle error
-    }
-  }
 
   useEffect(() => {
     if (searchedResults.length === 1) {
