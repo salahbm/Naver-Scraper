@@ -1,24 +1,48 @@
 // store.model.js
-import mongoose from "mongoose";
+import mongoose, { Schema, Document } from "mongoose";
 
-const reviewSchema = new mongoose.Schema({
+interface Review {
+  type: string;
+  count: number;
+}
+
+interface ScrapeData {
+  logo?: string;
+  name: string;
+  category?: string;
+  address?: string;
+  phone?: string;
+  socialLinks?: string[];
+  visitorsReview?: string;
+  blogReview?: string;
+  reviews?: Review[];
+  trendingKeywords?: string[];
+  naverKeywords?: any[];
+}
+
+interface StoreDocument extends Document {
+  user: mongoose.Schema.Types.ObjectId;
+  scrapeData: ScrapeData;
+}
+
+const reviewSchema = new Schema<Review>({
   type: { type: String, required: true },
   count: { type: Number, required: true },
 });
 
-const keywordSchema = new mongoose.Schema({
+const keywordSchema = new Schema({
   relKeyword: { type: String, required: true },
   monthlyPcQcCnt: { type: Number },
   monthlyMobileQcCnt: { type: Number },
-  monthlyAvePcClkCnt: { type: String },
-  monthlyAveMobileClkCnt: { type: String },
-  monthlyAvePcCtr: { type: String },
-  monthlyAveMobileCtr: { type: String },
-  plAvgDepth: { type: String },
+  monthlyAvePcClkCnt: { type: Number },
+  monthlyAveMobileClkCnt: { type: Number },
+  monthlyAvePcCtr: { type: Number },
+  monthlyAveMobileCtr: { type: Number },
+  plAvgDepth: { type: Number },
   compIdx: { type: String },
 });
 
-const scrapeDataSchema = new mongoose.Schema({
+const scrapeDataSchema = new Schema<ScrapeData>({
   logo: { type: String },
   name: { type: String, required: true },
   category: { type: String },
@@ -32,14 +56,16 @@ const scrapeDataSchema = new mongoose.Schema({
   naverKeywords: [keywordSchema],
 });
 
-const storeSchema = new mongoose.Schema(
+const storeSchema = new Schema<StoreDocument>(
   {
-    user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+    user: { type: Schema.Types.ObjectId, ref: "User", required: true },
     scrapeData: scrapeDataSchema,
   },
   { timestamps: true }
 );
 
-const Store = mongoose.models.Store || mongoose.model("Store", storeSchema);
+const Store =
+  (mongoose.models.Store as mongoose.Model<StoreDocument>) ||
+  mongoose.model<StoreDocument>("Store", storeSchema);
 
 export default Store;

@@ -13,12 +13,10 @@ export async function scrapeAndStoreProduct(
   selectedIframe: string,
   naverKeywords: NaverKeywordData[]
 ) {
-  console.log(`file: index.ts:16 ~ naverKeywords:`, naverKeywords);
-  if (!storeName && !email) return;
+  if (!storeName || !email) return;
 
   try {
     const scrapeData = await scrapeNaverData(storeName, selectedIframe);
-    console.log(`file: index.ts:58 ~ scrapeData:`, scrapeData?.name);
 
     if (
       !scrapeData ||
@@ -30,17 +28,16 @@ export async function scrapeAndStoreProduct(
       console.log("Insufficient data to create a store");
       return;
     }
+
     console.log("Started storing in the DB");
 
-    // const blogReview = parseInt(scrapeData.blogReview, 10) || 0;
-    // const visitorReview = parseInt(scrapeData.visitorsReview, 10) || 0;
-
-    const socialLinks = scrapeData.socialLinks ? scrapeData.socialLinks : [];
+    const socialLinks = scrapeData.socialLinks || [];
 
     await connectDB();
 
     // Assuming you have a User model
     const user = await User.findOne({ email });
+
     if (!user) {
       console.log("User not found with email:", email);
       return;
@@ -64,9 +61,13 @@ export async function scrapeAndStoreProduct(
         naverKeywords: Array.isArray(naverKeywords) ? naverKeywords : [],
       },
     });
+
     console.log(`Saved in DB`, newStore);
   } catch (error: any) {
+    console.error(`Failed to create/update product:`, error.message);
     throw new Error(`Failed to create/update product: ${error.message}`);
+  } finally {
+    await mongoose.connection.close();
   }
 }
 

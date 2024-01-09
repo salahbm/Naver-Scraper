@@ -12,7 +12,7 @@ interface pageProps {
 }
 const ProductDetails = async ({ params }: pageProps) => {
   console.log(`file: page.tsx:14 ~ params:`, params.id);
-  const temp = await getStoreById(params.id);
+  const temp: any | null = await getStoreById(params.id);
   const product: RestaurantCardProps = temp.scrapeData;
   console.log(`file: page.tsx:15 ~ product:`, product);
 
@@ -88,14 +88,24 @@ const ProductDetails = async ({ params }: pageProps) => {
                 {product?.naverKeywords?.map((keyword, index) => (
                   <li key={index}>
                     <p className="text-gray-700">
-                      {keyword.relKeyword}: Monthly PC Qc Count -
-                      {keyword.monthlyPcQcCnt}, Monthly Mobile Qc Count -
-                      {keyword.monthlyMobileQcCnt}
+                      Keyword: {decodeURIComponent(keyword.relKeyword)}
                     </p>
                     <p className="text-gray-700">
-                      Monthly Average PC Click Count -
+                      Monthly PC Qc Count: {keyword.monthlyPcQcCnt}, Monthly
+                      Mobile Qc Count: {keyword.monthlyMobileQcCnt}
+                    </p>
+                    <p className="text-gray-700">
+                      Monthly Average PC Click Count:{" "}
                       {keyword.monthlyAvePcClkCnt}, Monthly Average Mobile Click
-                      Count - {keyword.monthlyAveMobileClkCnt}
+                      Count: {keyword.monthlyAveMobileClkCnt}
+                    </p>
+                    <p className="text-gray-700">
+                      Monthly Average PC CTR: {keyword.monthlyAvePcCtr}, Monthly
+                      Average Mobile CTR: {keyword.monthlyAveMobileCtr}
+                    </p>
+                    <p className="text-gray-700">
+                      PL Avg Depth: {keyword.plAvgDepth}, Comp Index:{" "}
+                      {keyword.compIdx}
                     </p>
                   </li>
                 ))}
