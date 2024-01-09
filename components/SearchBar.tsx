@@ -3,8 +3,6 @@ import { scrapeAndStoreProduct } from "@/lib/actions";
 import { getIframeFromSearch } from "@/lib/scraper/helperFunctions";
 import { useSession } from "next-auth/react";
 import React, { FormEvent, useEffect, useState } from "react";
-import RestaurantCard from "./RestaurantCard";
-import { RestaurantCardProps } from "@/types";
 
 const isValidNaverProductUrl = (searchName: string): boolean => {
   try {
@@ -47,24 +45,25 @@ const SearchBar = () => {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const isValidLink = isValidNaverProductUrl(searchPrompt);
-    if (!isValidLink)
-      alert(
-        "Please provide brand name and location for better result, EX: '써브웨이 낙성대점'"
-      );
-    // Scrap the product
-    try {
-      setIsLoading(true);
+    // const isValidLink = isValidNaverProductUrl(searchPrompt);
+    // if (!isValidLink)
+    //   alert(
+    //     "Please provide brand name and location for better result, EX: '써브웨이 낙성대점'"
+    //   );
+    // // Scrap the product
+    // try {
+    //   setIsLoading(true);
 
-      const getResults: any = await getIframeFromSearch(searchPrompt);
-      if (getResults) {
-        setSearchedResults(getResults);
-      }
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setIsLoading(false);
-    }
+    //   const getResults: any = await getIframeFromSearch(searchPrompt);
+    //   if (getResults) {
+    //     setSearchedResults(getResults);
+    //   }
+    // } catch (error) {
+    //   console.log(error);
+    // } finally {
+    //   setIsLoading(false);
+    // }
+    await getResultFromNaverAd();
   };
 
   const handleScrapeFromNaver = async (url: string) => {
@@ -83,6 +82,21 @@ const SearchBar = () => {
       setSearchedResults([]);
     }
   };
+
+  async function getResultFromNaverAd() {
+    try {
+      const response = await fetch(
+        `/api/naver-ad?hintKeywords=${searchPrompt}`
+      );
+      const data = await response.json();
+
+      console.log(data);
+      // Handle the API response as needed
+    } catch (error) {
+      console.error("Error:", error);
+      // Handle error
+    }
+  }
 
   useEffect(() => {
     if (searchedResults.length === 1) {

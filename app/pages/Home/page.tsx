@@ -17,7 +17,6 @@ interface Props {
 const Home = () => {
   const { data: session } = useSession();
   const [stores, setStores] = useState<Props[]>([]);
-  console.log(`file: page.tsx:19 ~ stores:`, stores);
 
   useEffect(() => {
     const fetchStores = async () => {
@@ -70,7 +69,11 @@ const Home = () => {
         <div className="flex flex-wrap gap-x-8 gap-y-2">
           {stores.length > 0 ? (
             stores?.map((product, index) => (
-              <RestaurantCard key={index} keyId={product._id} data={product.scrapeData} />
+              <RestaurantCard
+                key={index}
+                keyId={product._id}
+                data={product.scrapeData}
+              />
             ))
           ) : (
             <p className="text-center font-semibold text-lg text-neutral-700">
