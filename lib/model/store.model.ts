@@ -1,9 +1,20 @@
-// store.model.js
 import mongoose from "mongoose";
 
 const reviewSchema = new mongoose.Schema({
   type: { type: String, required: true },
   count: { type: Number, required: true },
+});
+
+const keywordSchema = new mongoose.Schema({
+  relKeyword: { type: String, required: true },
+  monthlyPcQcCnt: { type: String },
+  monthlyMobileQcCnt: { type: String },
+  monthlyAvePcClkCnt: { type: String },
+  monthlyAveMobileClkCnt: { type: String },
+  monthlyAvePcCtr: { type: String },
+  monthlyAveMobileCtr: { type: String },
+  plAvgDepth: { type: String },
+  compIdx: { type: String },
 });
 
 const scrapeDataSchema = new mongoose.Schema({
@@ -16,7 +27,7 @@ const scrapeDataSchema = new mongoose.Schema({
   visitorsReview: { type: String },
   blogReview: { type: String },
   reviews: [reviewSchema],
-  trendingKeywords: [{ type: String }],
+  trendingKeywords: [keywordSchema],
 });
 
 const storeSchema = new mongoose.Schema(
