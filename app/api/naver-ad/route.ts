@@ -18,7 +18,7 @@ export async function GET(req: NextRequest) {
 
     // Check if hintKeywords exists in req.url
     const keyword: string = req.url.split("?")[1].split("=")[1];
-
+    const encodedKeyword = encodeURIComponent(keyword);
     if (!keyword) {
       return NextResponse.json(
         { error: "hintKeywords is missing in the query" },
@@ -42,7 +42,7 @@ export async function GET(req: NextRequest) {
     };
 
     const response = await fetch(
-      `https://api.naver.com/keywordstool?hintKeywords=${keyword}&showDetail=1`,
+      `https://api.naver.com/keywordstool?hintKeywords=${encodedKeyword}&showDetail=1`,
       requestOptions
     );
 

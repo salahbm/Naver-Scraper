@@ -8,8 +8,8 @@ const reviewSchema = new mongoose.Schema({
 
 const keywordSchema = new mongoose.Schema({
   relKeyword: { type: String, required: true },
-  monthlyPcQcCnt: { type: String },
-  monthlyMobileQcCnt: { type: String },
+  monthlyPcQcCnt: { type: Number },
+  monthlyMobileQcCnt: { type: Number },
   monthlyAvePcClkCnt: { type: String },
   monthlyAveMobileClkCnt: { type: String },
   monthlyAvePcCtr: { type: String },
