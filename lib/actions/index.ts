@@ -46,7 +46,6 @@ export async function scrapeAndStoreProduct(
 
     const newStore = await Store.create({
       user: user._id,
-      naverKeywords: Array.isArray(naverKeywords) ? naverKeywords : [],
       scrapeData: {
         logo: scrapeData.logo,
         name: scrapeData.name,
@@ -57,6 +56,7 @@ export async function scrapeAndStoreProduct(
         visitorsReview: scrapeData.visitorsReview,
         blogReview: scrapeData.blogReview,
         reviews: Array.isArray(scrapeData.reviews) ? scrapeData.reviews : [],
+        naverKeywords: Array.isArray(naverKeywords) ? naverKeywords : [],
         trendingKeywords: Array.isArray(scrapeData.trendingKeywords)
           ? scrapeData.trendingKeywords
           : [],
