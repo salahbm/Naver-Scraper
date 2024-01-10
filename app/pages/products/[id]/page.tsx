@@ -11,11 +11,8 @@ interface pageProps {
   params: { id: string };
 }
 const ProductDetails = async ({ params }: pageProps) => {
-  console.log(`file: page.tsx:14 ~ params:`, params.id);
   const temp: any | null = await getStoreById(params.id);
-  const naverData: NaverKeywordData[] = temp.naverKeywords;
   const product: RestaurantCardProps = temp.scrapeData;
-  console.log(`file: page.tsx:15 ~ product:`, product);
 
   return (
     <>
@@ -86,7 +83,7 @@ const ProductDetails = async ({ params }: pageProps) => {
             </h3>
             <div className="mt-2">
               <ul>
-                {naverData?.map((keyword, index) => (
+                {product.naverKeywords?.map((keyword, index) => (
                   <li key={index}>
                     <p className="text-gray-700">
                       Keyword: {decodeURIComponent(keyword.relKeyword)}
