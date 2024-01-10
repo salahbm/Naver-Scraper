@@ -68,11 +68,15 @@ const ProductDetails = async ({ params }: pageProps) => {
               <h3 className="text-lg font-semibold mb-2 text-green-500">
                 Reviews:
               </h3>
-              <ul className="max-h-[350px] overflow-auto border rounded-md">
+              <ul className="max-h-[350px] overflow-auto border rounded-md border-b ">
                 {product?.reviews?.map((review: any, index: number) => (
-                  <li key={index}>
+                  <li
+                    key={index}
+                    className="flex items-center justify-between px-24"
+                  >
+                    <p className="text-neutral-600 font-thin">{review.type}</p>
                     <p className="text-neutral-600 font-semibold">
-                      {review.type}: {review.count}
+                      {review.count}
                     </p>
                   </li>
                 ))}
@@ -85,7 +89,7 @@ const ProductDetails = async ({ params }: pageProps) => {
               <ul>
                 {product.naverKeywords?.map((keyword, index) => (
                   <li key={index}>
-                    <p className="text-gray-700 font-bold text-lg">
+                    <p className="text-green-600 font-bold text-lg text-center">
                       Keyword: {decodeURIComponent(keyword.relKeyword)}
                     </p>
                     <div className="flex items-center justify-between px-5">
@@ -134,8 +138,7 @@ const ProductDetails = async ({ params }: pageProps) => {
                     <div className="flex items-center justify-between px-5">
                       <p className="text-gray-700 font-bold">
                         Comp Index:{" "}
-                        <span className="text-neutral-600 font-semibold">
-                          {" "}
+                        <span className="text-neutral-600 font-semibold mx-2">
                           {keyword.compIdx}
                         </span>
                       </p>
@@ -159,10 +162,12 @@ const ProductDetails = async ({ params }: pageProps) => {
               Trending Keywords
             </h3>
             <div className="mt-2">
-              <ul>
+              <ul className="flex items-center justify-start gap-3">
                 {product.trendingKeywords?.map((keyword, index) => (
                   <li key={index}>
-                    <p className="text-gray-700">Keyword: {keyword}</p>
+                    <p className="text-neutral-600 font-semibold border rounded-md p-2 m-1">
+                      {keyword}
+                    </p>
                   </li>
                 ))}
               </ul>
