@@ -109,6 +109,20 @@ const ProductDetails = async ({ params }: pageProps) => {
                 ))}
               </ul>
             </div>
+            <h3 className="text-lg font-semibold mb-2 text-naver-green-500">
+              Trending Keywords
+            </h3>
+            <div className="mt-2">
+              <ul>
+                {product.trendingKeywords?.map((keyword, index) => (
+                  <li key={index}>
+                    <p className="text-gray-700">
+                      Keyword: {decodeURIComponent(keyword)}
+                    </p>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
         </section>
       )}
