@@ -172,7 +172,7 @@ export async function getLogo(frame: any) {
 }
 
 // go to naver to get trending keywords
-export const getKeywords = async (page: Page, searchPrompt: string) => {
+export const getTrendingKeywords = async (page: Page, searchPrompt: string) => {
   if (!page) return;
   await page.setViewport({ width: 1920, height: 1080 });
   await page.goto("https://www.naver.com/");
@@ -200,7 +200,7 @@ export const getKeywords = async (page: Page, searchPrompt: string) => {
     for (const liItem of liItems) {
       // Use $eval on page, not liItem, and adjust the selector
       const keywordName = await page.$eval(
-        ".tit", // Adjust the selector to match the structure of your HTML
+        "#nx_right_related_keywords > div > div.related_srch > ul > li:nth-child(1) > a > div", // Adjust the selector to match the structure of your HTML
         (el: any) => el.innerText
       );
       keywords.push(keywordName);

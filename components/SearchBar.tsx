@@ -81,7 +81,7 @@ const SearchBar = () => {
         monthlyPcQcCnt: parseInt(item.monthlyPcQcCnt as any) || 0,
         monthlyMobileQcCnt: parseInt(item.monthlyMobileQcCnt as any) || 0,
       };
-      console.log(`file: SearchBar.tsx:80 ~ processedData:`, processedData);
+
       return processedData;
     });
 

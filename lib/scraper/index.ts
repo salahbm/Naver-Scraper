@@ -1,10 +1,8 @@
 "use server";
-import puppeteer, { trimCache } from "puppeteer";
+import puppeteer from "puppeteer";
 import {
-  getIframeFromSearch,
-  getKeywords,
+  getTrendingKeywords,
   getLogo,
-  getMenu,
   getVisitorsReview,
   wait,
 } from "./helperFunctions";
@@ -175,10 +173,10 @@ export async function scrapeNaverData(
     console.log("Error in getVisitorsReview: ", error.message);
   }
 
-  // get keywords
+  // get trending  keywords
   let trendingKeywords;
   try {
-    trendingKeywords = await getKeywords(page, searchName);
+    trendingKeywords = await getTrendingKeywords(page, searchName);
   } catch (error: any) {
     console.log(error.message);
   }
