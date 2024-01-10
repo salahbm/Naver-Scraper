@@ -17,12 +17,19 @@ interface Props {
 const Home = () => {
   const { data: session } = useSession();
   const [stores, setStores] = useState<Props[]>([]);
-
   useEffect(() => {
     const fetchStores = async () => {
       try {
         if (session?.user?.email) {
-          const getStores = await getAllStores(session.user.email);
+          const getStoresData = await getAllStores(session.user.email);
+
+          // Assuming getStoresData is an array of objects
+          const getStores: Props[] = getStoresData.map((storeData: any) => ({
+            _id: storeData._id,
+            scrapeData: storeData.scrapeData,
+            restaurants: storeData.restaurants || [],
+          }));
+
           console.log(getStores);
           setStores(getStores);
         } else {
@@ -32,12 +39,10 @@ const Home = () => {
         console.error(`Failed to fetch stores: ${error.message}`);
       }
     };
-
     if (session?.user?.email) {
       fetchStores();
     }
   }, [session?.user?.email]);
-
   return (
     <>
       <section className="px-6 md:px-20 py-14">

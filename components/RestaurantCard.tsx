@@ -9,8 +9,6 @@ interface Props {
 }
 
 const RestaurantCard = ({ keyId, data }: Props) => {
-  console.log(`RestaurantCard.tsx ~ data:`, data);
-
   if (!data) return;
   return (
     <Link href={`/pages/products/${keyId}`}>
