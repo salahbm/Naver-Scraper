@@ -13,6 +13,7 @@ export async function scrapeAndStoreProduct(
   selectedIframe: string,
   naverKeywords: NaverKeywordData[]
 ) {
+  console.log(`file: index.ts:16 ~ naverKeywords:`, naverKeywords);
   if (!storeName || !email) return;
 
   try {

@@ -76,8 +76,15 @@ const SearchBar = () => {
     // get data from Naver
     const naverData = await getResultFromNaverAd(searchPrompt);
     const data = naverData.keywordList.map((item: NaverKeywordData) => {
-      return item;
+      const processedData = {
+        ...item,
+        monthlyPcQcCnt: parseInt(item.monthlyPcQcCnt as any) || 7,
+        monthlyMobileQcCnt: parseInt(item.monthlyMobileQcCnt as any) || 7,
+      };
+      console.log(`file: SearchBar.tsx:80 ~ processedData:`, processedData);
+      return processedData;
     });
+
     setNaverKeywords(data);
     // Scrap the product
     try {
