@@ -78,8 +78,8 @@ const SearchBar = () => {
     const data = naverData.keywordList.map((item: NaverKeywordData) => {
       const processedData = {
         ...item,
-        monthlyPcQcCnt: parseInt(item.monthlyPcQcCnt as any) || 7,
-        monthlyMobileQcCnt: parseInt(item.monthlyMobileQcCnt as any) || 7,
+        monthlyPcQcCnt: parseInt(item.monthlyPcQcCnt as any) || 0,
+        monthlyMobileQcCnt: parseInt(item.monthlyMobileQcCnt as any) || 0,
       };
       console.log(`file: SearchBar.tsx:80 ~ processedData:`, processedData);
       return processedData;
