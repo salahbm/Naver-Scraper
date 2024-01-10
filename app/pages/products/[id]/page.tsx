@@ -68,43 +68,85 @@ const ProductDetails = async ({ params }: pageProps) => {
               <h3 className="text-lg font-semibold mb-2 text-green-500">
                 Reviews:
               </h3>
-              <ul>
+              <ul className="max-h-[350px] overflow-auto border rounded-md">
                 {product?.reviews?.map((review: any, index: number) => (
                   <li key={index}>
-                    <p>
+                    <p className="text-neutral-600 font-semibold">
                       {review.type}: {review.count}
                     </p>
                   </li>
                 ))}
               </ul>
             </div>
-            <h3 className="text-lg font-semibold mb-2 text-naver-green-500">
+            <h3 className="text-lg font-semibold mb-2 text-green-500">
               Naver Keywords
             </h3>
             <div className="mt-2">
               <ul>
                 {product.naverKeywords?.map((keyword, index) => (
                   <li key={index}>
-                    <p className="text-gray-700">
+                    <p className="text-gray-700 font-bold text-lg">
                       Keyword: {decodeURIComponent(keyword.relKeyword)}
                     </p>
-                    <p className="text-gray-700">
-                      Monthly PC Qc Count: {keyword.monthlyPcQcCnt}, Monthly
-                      Mobile Qc Count: {keyword.monthlyMobileQcCnt}
-                    </p>
-                    <p className="text-gray-700">
-                      Monthly Average PC Click Count:{" "}
-                      {keyword.monthlyAvePcClkCnt}, Monthly Average Mobile Click
-                      Count: {keyword.monthlyAveMobileClkCnt}
-                    </p>
-                    <p className="text-gray-700">
-                      Monthly Average PC CTR: {keyword.monthlyAvePcCtr}, Monthly
-                      Average Mobile CTR: {keyword.monthlyAveMobileCtr}
-                    </p>
-                    <p className="text-gray-700">
-                      PL Avg Depth: {keyword.plAvgDepth}, Comp Index:{" "}
-                      {keyword.compIdx}
-                    </p>
+                    <div className="flex items-center justify-between px-5">
+                      <p className="text-gray-700 font-bold">
+                        Monthly Mobile Qc Count:
+                        <span className="text-neutral-600 font-semibold">
+                          {keyword.monthlyMobileQcCnt}
+                        </span>
+                      </p>
+                      <p className="text-gray-700 font-bold">
+                        Monthly PC Qc Count:
+                        <span className="text-neutral-600 font-semibold">
+                          {keyword.monthlyPcQcCnt}
+                        </span>
+                      </p>
+                    </div>
+                    <div className="flex items-center justify-between px-5">
+                      <p className="text-gray-700 font-bold">
+                        Monthly Average Mobile Click Count:
+                        <span className="text-neutral-600 font-semibold">
+                          {keyword.monthlyAveMobileClkCnt}
+                        </span>
+                      </p>
+                      <p className="text-gray-700 font-bold">
+                        Monthly Average PC Click Count:
+                        <span className="text-neutral-600 font-semibold">
+                          {keyword.monthlyAvePcClkCnt}
+                        </span>
+                      </p>
+                    </div>
+                    <div className="flex items-center justify-between px-5">
+                      <p className="text-gray-700 font-bold">
+                        Monthly Average PC CTR:{" "}
+                        <span className="text-neutral-600 font-semibold">
+                          {" "}
+                          {keyword.monthlyAvePcCtr}
+                        </span>
+                      </p>
+                      <p className="text-gray-700 font-bold">
+                        Monthly Average Mobile CTR:{" "}
+                        <span className="text-neutral-600 font-semibold">
+                          {keyword.monthlyAveMobileCtr}
+                        </span>
+                      </p>
+                    </div>
+                    <div className="flex items-center justify-between px-5">
+                      <p className="text-gray-700 font-bold">
+                        Comp Index:{" "}
+                        <span className="text-neutral-600 font-semibold">
+                          {" "}
+                          {keyword.compIdx}
+                        </span>
+                      </p>
+                      <p className="text-gray-700 font-bold">
+                        PL Avg Depth:
+                        <span className="text-neutral-600 font-semibold">
+                          {" "}
+                          {keyword.plAvgDepth}
+                        </span>
+                      </p>
+                    </div>
                   </li>
                 ))}
               </ul>
@@ -112,7 +154,7 @@ const ProductDetails = async ({ params }: pageProps) => {
             <h3
               className={`${
                 product.trendingKeywords?.length === 0 && "hidden"
-              } text-lg font-semibold mb-2 text-naver-green-500`}
+              } text-lg font-semibold mb-2 text-green-500`}
             >
               Trending Keywords
             </h3>
