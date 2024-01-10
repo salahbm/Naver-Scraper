@@ -1,4 +1,5 @@
 // store.model.js
+import { NaverKeywordData } from "@/types";
 import mongoose, { Schema, Document } from "mongoose";
 
 interface Review {
@@ -22,6 +23,7 @@ interface ScrapeData {
 
 interface StoreDocument extends Document {
   user: mongoose.Schema.Types.ObjectId;
+  naverKeywords: NaverKeywordData[];
   scrapeData: ScrapeData;
 }
 
@@ -30,7 +32,7 @@ const reviewSchema = new Schema<Review>({
   count: { type: Number, required: true },
 });
 
-const keywordSchema = new Schema({
+const keywordSchema = new mongoose.Schema({
   relKeyword: { type: String, required: true },
   monthlyPcQcCnt: { type: Number },
   monthlyMobileQcCnt: { type: Number },
@@ -53,12 +55,12 @@ const scrapeDataSchema = new Schema<ScrapeData>({
   blogReview: { type: String },
   reviews: [reviewSchema],
   trendingKeywords: [{ type: String }],
-  naverKeywords: [keywordSchema],
 });
 
 const storeSchema = new Schema<StoreDocument>(
   {
     user: { type: Schema.Types.ObjectId, ref: "User", required: true },
+    naverKeywords: [keywordSchema],
     scrapeData: scrapeDataSchema,
   },
   { timestamps: true }

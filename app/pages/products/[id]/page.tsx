@@ -1,5 +1,5 @@
 import { getStoreById } from "@/lib/actions";
-import { RestaurantCardProps } from "@/types";
+import { NaverKeywordData, RestaurantCardProps } from "@/types";
 
 const ProductNotAvailableNotice = () => (
   <div className="flex items-center justify-center h-screen">
@@ -13,6 +13,7 @@ interface pageProps {
 const ProductDetails = async ({ params }: pageProps) => {
   console.log(`file: page.tsx:14 ~ params:`, params.id);
   const temp: any | null = await getStoreById(params.id);
+  const naverData: NaverKeywordData[] = temp.naverKeywords;
   const product: RestaurantCardProps = temp.scrapeData;
   console.log(`file: page.tsx:15 ~ product:`, product);
 
@@ -85,7 +86,7 @@ const ProductDetails = async ({ params }: pageProps) => {
             </h3>
             <div className="mt-2">
               <ul>
-                {product?.naverKeywords?.map((keyword, index) => (
+                {naverData?.map((keyword, index) => (
                   <li key={index}>
                     <p className="text-gray-700">
                       Keyword: {decodeURIComponent(keyword.relKeyword)}

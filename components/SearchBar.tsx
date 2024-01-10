@@ -1,6 +1,7 @@
 "use client";
 import { scrapeAndStoreProduct } from "@/lib/actions";
 import { getIframeFromSearch } from "@/lib/scraper/helperFunctions";
+import { NaverKeywordData } from "@/types";
 import { useSession } from "next-auth/react";
 import React, { FormEvent, useEffect, useState } from "react";
 
@@ -43,7 +44,6 @@ async function getResultFromNaverAd(searchPrompt: string) {
     if (response.ok) {
       const data = await response.json();
 
-      console.log(JSON.parse(data.data));
       return JSON.parse(data.data);
     } else {
       console.error("Error:", response.status);
@@ -75,7 +75,10 @@ const SearchBar = () => {
 
     // get data from Naver
     const naverData = await getResultFromNaverAd(searchPrompt);
-    setNaverKeywords(naverData);
+    const data = naverData.keywordList.map((item: NaverKeywordData) => {
+      return item;
+    });
+    setNaverKeywords(data);
     // Scrap the product
     try {
       setIsLoading(true);

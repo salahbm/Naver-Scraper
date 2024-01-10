@@ -34,6 +34,7 @@ export async function scrapeAndStoreProduct(
     const socialLinks = scrapeData.socialLinks || [];
 
     await connectDB();
+    console.log(scrapeData.reviews);
 
     // Assuming you have a User model
     const user = await User.findOne({ email });
@@ -45,6 +46,7 @@ export async function scrapeAndStoreProduct(
 
     const newStore = await Store.create({
       user: user._id,
+      naverKeywords: Array.isArray(naverKeywords) ? naverKeywords : [],
       scrapeData: {
         logo: scrapeData.logo,
         name: scrapeData.name,
@@ -58,7 +60,6 @@ export async function scrapeAndStoreProduct(
         trendingKeywords: Array.isArray(scrapeData.trendingKeywords)
           ? scrapeData.trendingKeywords
           : [],
-        naverKeywords: Array.isArray(naverKeywords) ? naverKeywords : [],
       },
     });
 
