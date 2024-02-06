@@ -2,7 +2,6 @@
 import { UserType } from "@/types";
 import { connectDB } from "../database/mongoose";
 import User from "../model/user.model";
-import Session from "../model/session.model";
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 
