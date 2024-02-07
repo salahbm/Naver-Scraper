@@ -120,6 +120,7 @@ const SearchBar = () => {
     } finally {
       setIsLoading(false);
       setSearchedResults([]);
+      window.location.reload();
     }
   };
 
@@ -164,7 +165,7 @@ const SearchBar = () => {
         }`}
       >
         <p className="font-semibold text-neutral-600 animate-pulse">
-          Scraping and Storing data... 1min{' '}
+          Scraping and Storing data... 1-2mins{' '}
         </p>
       </div>
       {/* <div>

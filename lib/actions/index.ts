@@ -85,7 +85,7 @@ export async function getAllStores(email: string) {
     }
 
     // Find stores that match the provided user email
-    const stores = await Store.find().lean();
+    const stores = await Store.find().sort({ createdAt: -1 }).lean();
 
     if (stores.length === 0) {
       console.log(`No stores found for the user with email: ${user._id}`);
@@ -98,6 +98,7 @@ export async function getAllStores(email: string) {
     throw new Error(`Failed to get stores: ${error.message}`);
   }
 }
+
 export async function getRecentStores() {
   try {
     await connectDB();
