@@ -1,12 +1,12 @@
-"use client";
-import RestaurantCard from "@/components/RestaurantCard";
-import SearchBar from "@/components/SearchBar";
-import { getAllStores } from "@/lib/actions";
-import { RestaurantCardProps } from "@/types";
-import { useSession } from "next-auth/react";
+'use client';
+import RestaurantCard from '@/components/RestaurantCard';
+import SearchBar from '@/components/SearchBar';
+import { getAllStores, getRecentStores } from '@/lib/actions';
+import { RestaurantCardProps } from '@/types';
+import { useSession } from 'next-auth/react';
 
-import Image from "next/image";
-import { useEffect, useState } from "react";
+import Image from 'next/image';
+import { useEffect, useState } from 'react';
 
 interface Props {
   _id: string;
@@ -17,12 +17,17 @@ interface Props {
 const Home = () => {
   const { data: session } = useSession();
   const [stores, setStores] = useState<Props[]>([]);
+  const [recentStores, setRecentStores] = useState<Props[]>([]);
   useEffect(() => {
     const fetchStores = async () => {
       try {
         if (session?.user?.email) {
           const getStoresData = await getAllStores(session.user.email);
-
+          const getRecentStoresData: any = await getRecentStores();
+          console.log(`getRecentStoresData:`, getRecentStoresData);
+          if (getRecentStoresData) {
+            setRecentStores(getRecentStoresData);
+          }
           // Assuming getStoresData is an array of objects
           const getStores: Props[] = getStoresData.map((storeData: any) => ({
             _id: storeData._id,
@@ -33,7 +38,7 @@ const Home = () => {
           console.log(getStores);
           setStores(getStores);
         } else {
-          console.error("User email not available in the session.");
+          console.error('User email not available in the session.');
         }
       } catch (error: any) {
         console.error(`Failed to fetch stores: ${error.message}`);
@@ -69,7 +74,7 @@ const Home = () => {
       </section>
 
       <section className="trending-section">
-        <h2 className="section-text">Searched Brands</h2>
+        <h2 className="section-text">Brands You Have Searched</h2>
 
         <div className="flex flex-wrap gap-x-8 gap-y-2">
           {stores.length > 0 ? (
@@ -83,6 +88,25 @@ const Home = () => {
           ) : (
             <p className="text-center font-semibold text-lg text-neutral-700">
               You have not searched brands yet
+            </p>
+          )}
+        </div>
+      </section>
+      <section className="trending-section">
+        <h2 className="section-text">Recent Searched Brands</h2>
+
+        <div className="flex flex-wrap gap-x-8 gap-y-2">
+          {recentStores.length > 0 ? (
+            stores?.map((product, index) => (
+              <RestaurantCard
+                key={index}
+                keyId={product._id}
+                data={product.scrapeData}
+              />
+            ))
+          ) : (
+            <p className="text-center font-semibold text-lg text-neutral-700">
+              There are not searched brands yet
             </p>
           )}
         </div>

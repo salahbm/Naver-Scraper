@@ -1,24 +1,24 @@
-"use server";
-import puppeteer from "puppeteer";
+'use server';
+import puppeteer from 'puppeteer';
 import {
   getTrendingKeywords,
   getLogo,
   getVisitorsReview,
   wait,
-} from "./helperFunctions";
+} from './helperFunctions';
 
 export async function scrapeNaverData(
   searchName: string,
   selectedIframe: any
 ): Promise<any> {
-  const browser = await puppeteer.launch({ headless: "new" });
+  const browser = await puppeteer.launch({ headless: false });
   const page = await browser.newPage();
   await page.setUserAgent(
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
   );
   await page.setViewport({ width: 1920, height: 1080 });
-  await page.goto("https://map.naver.com/v5/search/" + searchName, {
-    waitUntil: "domcontentloaded",
+  await page.goto('https://map.naver.com/v5/search/' + searchName, {
+    waitUntil: 'domcontentloaded',
     timeout: 60000,
   });
 
@@ -27,18 +27,18 @@ export async function scrapeNaverData(
 
   try {
     await page.waitForFunction(
-      () => document.querySelector("#searchIframe") !== null,
+      () => document.querySelector('#searchIframe') !== null,
       { timeout: 60000 }
     );
 
-    const iframeHandle: any | null = await page.$("#searchIframe");
+    const iframeHandle: any | null = await page.$('#searchIframe');
     if (!iframeHandle) {
-      throw new Error("iframe element not found.");
+      throw new Error('iframe element not found.');
     }
 
     searchFrame = await iframeHandle.contentFrame();
   } catch (error) {
-    console.log(searchName + " iframe not found.", error);
+    console.log(searchName + ' iframe not found.', error);
     return;
   }
   try {
@@ -49,25 +49,25 @@ export async function scrapeNaverData(
       await searchFrame.click(selectedIframe);
     }
   } catch (error) {
-    console.log("Only 1 li element");
+    console.log('Only 1 li element');
   }
 
   let frame: any | null;
 
   try {
     await page.waitForFunction(
-      () => document.querySelector("#entryIframe") !== null,
+      () => document.querySelector('#entryIframe') !== null,
       { timeout: 60000 }
     );
 
-    const iframeHandle: any | null = await page.$("#entryIframe");
+    const iframeHandle: any | null = await page.$('#entryIframe');
     if (!iframeHandle) {
-      throw new Error("iframe element not found.");
+      throw new Error('iframe element not found.');
     }
 
     frame = await iframeHandle.contentFrame();
   } catch {
-    console.log(searchName + " iframe not found.");
+    console.log(searchName + ' iframe not found.');
     browser.close();
     return;
   }
@@ -75,62 +75,62 @@ export async function scrapeNaverData(
   await wait(2);
 
   // handle restaurant info
-  const handleName = await frame.$("#_title > div > span.Fc1rA");
-  const handleCategory = await frame.$("#_title > div > span.DJJvD");
+  const handleName = await frame.$('#_title > div > span.Fc1rA');
+  const handleCategory = await frame.$('#_title > div > span.DJJvD');
   const handleAddress = await frame.$(
-    "#app-root > div > div > div > div:nth-child(5) > div > div:nth-child(2) > div.place_section_content > div > div.O8qbU.tQY7D > div > a > span.LDgIH"
+    '#app-root > div > div > div > div:nth-child(5) > div > div:nth-child(2) > div.place_section_content > div > div.O8qbU.tQY7D > div > a > span.LDgIH'
   );
   const handlePhone = await frame.$(
-    "#app-root > div > div > div > div:nth-child(5) > div > div:nth-child(2) > div.place_section_content > div > div.O8qbU.nbXkr > div > span.xlx7Q"
+    '#app-root > div > div > div > div:nth-child(5) > div > div:nth-child(2) > div.place_section_content > div > div.O8qbU.nbXkr > div > span.xlx7Q'
   );
   const handleSocials = await frame.$(
-    "#app-root > div > div > div > div:nth-child(5) > div > div:nth-child(2) > div.place_section_content > div > div.O8qbU.yIPfO > div > div"
+    '#app-root > div > div > div > div:nth-child(5) > div > div:nth-child(2) > div.place_section_content > div > div.O8qbU.yIPfO > div > div'
   );
   const handleVisitorsReview = await frame.$(
-    "#app-root > div > div > div > div.place_section.no_margin.OP4V8 > div.zD5Nm.undefined > div.dAsGb > span:nth-child(1) > a"
+    '#app-root > div > div > div > div.place_section.no_margin.OP4V8 > div.zD5Nm.undefined > div.dAsGb > span:nth-child(1) > a'
   );
   const handleBLogReview = await frame.$(
-    "#app-root > div > div > div > div.place_section.no_margin.OP4V8 > div.zD5Nm.undefined > div.dAsGb > span:nth-child(2) > a"
+    '#app-root > div > div > div > div.place_section.no_margin.OP4V8 > div.zD5Nm.undefined > div.dAsGb > span:nth-child(2) > a'
   );
   wait(1);
 
   // Extract text content from the element handles
   const name = handleName
     ? await frame.evaluate((el: any) => el.innerText, handleName)
-    : "not available";
+    : 'not available';
 
   const category = handleCategory
     ? await frame.evaluate((el: any) => el.innerText, handleCategory)
-    : "not available";
+    : 'not available';
 
   const address = handleAddress
     ? await frame.evaluate((el: any) => el.innerText, handleAddress)
-    : "not available";
+    : 'not available';
 
   const phone = handlePhone
     ? await frame.evaluate((el: any) => el.innerText, handlePhone)
-    : "not available";
+    : 'not available';
 
   // Check if handleVisitorsReview exists before trying to use it
   const visitorsReview = handleVisitorsReview
     ? await frame.evaluate((el: any) => el.innerText, handleVisitorsReview)
-    : "not available";
+    : 'not available';
 
   // Check if handleBLogReview exists before trying to use it
   const blogReview = handleBLogReview
     ? await frame.evaluate((el: any) => el.innerText, handleBLogReview)
-    : "not available";
+    : 'not available';
 
   if (!handleSocials) {
-    console.log("No Socials Link");
+    console.log('No Socials Link');
   }
 
   const socialLinks = handleSocials
     ? await frame.evaluate((element: HTMLBodyElement) => {
-        const links = Array.from(element.querySelectorAll("a"));
+        const links = Array.from(element.querySelectorAll('a'));
         return links.map((link: any) => link.href);
       }, handleSocials)
-    : ["not available"];
+    : ['not available'];
 
   // Check if there is menu information
   // const menuBtn = await frame.$eval(
@@ -170,7 +170,7 @@ export async function scrapeNaverData(
   try {
     reviews = await getVisitorsReview(frame);
   } catch (error: any) {
-    console.log("Error in getVisitorsReview: ", error.message);
+    console.log('Error in getVisitorsReview: ', error.message);
   }
 
   // get trending  keywords

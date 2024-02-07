@@ -1,11 +1,11 @@
-"use server";
+'use server';
 
-import { connectDB } from "../database/mongoose";
-import { scrapeNaverData } from "../scraper";
-import Store from "../model/store.model";
-import mongoose from "mongoose";
-import User from "../model/user.model";
-import { NaverKeywordData } from "@/types";
+import { connectDB } from '../database/mongoose';
+import { scrapeNaverData } from '../scraper';
+import Store from '../model/store.model';
+import mongoose from 'mongoose';
+import User from '../model/user.model';
+import { NaverKeywordData } from '@/types';
 
 export async function scrapeAndStoreProduct(
   storeName: string,
@@ -26,11 +26,11 @@ export async function scrapeAndStoreProduct(
       !scrapeData.category ||
       !scrapeData.phone
     ) {
-      console.log("Insufficient data to create a store");
+      console.log('Insufficient data to create a store');
       return;
     }
 
-    console.log("Started storing in the DB");
+    console.log('Started storing in the DB');
 
     const socialLinks = scrapeData.socialLinks || [];
 
@@ -41,7 +41,7 @@ export async function scrapeAndStoreProduct(
     const user = await User.findOne({ email });
 
     if (!user) {
-      console.log("User not found with email:", email);
+      console.log('User not found with email:', email);
       return;
     }
 
@@ -80,15 +80,33 @@ export async function getAllStores(email: string) {
     const user = await User.findOne({ email });
 
     if (!user) {
-      console.log("User not found with email:", email);
+      console.log('User not found with email:', email);
       return [];
     }
 
     // Find stores that match the provided user email
-    const stores = await Store.find();
+    const stores = await Store.find().lean();
 
     if (stores.length === 0) {
       console.log(`No stores found for the user with email: ${user._id}`);
+      return [];
+    } else {
+      return stores;
+    }
+  } catch (error: any) {
+    console.log(error.message);
+    throw new Error(`Failed to get stores: ${error.message}`);
+  }
+}
+export async function getRecentStores() {
+  try {
+    await connectDB();
+
+    // Query for the latest 6 stores
+    const stores = await Store.find().sort({ createdAt: -1 }).limit(6).lean();
+
+    if (stores.length === 0) {
+      console.log('No stores found');
       return [];
     } else {
       return stores;
@@ -103,7 +121,7 @@ export async function getStoreById(storeId: string) {
   try {
     await connectDB();
     if (!mongoose.Types.ObjectId.isValid(storeId)) {
-      throw new Error("Invalid ObjectId format");
+      throw new Error('Invalid ObjectId format');
     }
 
     const store = await Store.findOne({ _id: storeId });
@@ -113,6 +131,6 @@ export async function getStoreById(storeId: string) {
 
     return store;
   } catch (error: any) {
-    console.log("Cant store by id", error.message);
+    console.log('Cant store by id', error.message);
   }
 }
