@@ -104,6 +104,7 @@ export async function getRecentStores() {
 
     // Query for the latest 6 stores
     const stores = await Store.find().sort({ createdAt: -1 }).limit(6).lean();
+    console.log(`stores:`, stores);
 
     if (stores.length === 0) {
       console.log('No stores found');

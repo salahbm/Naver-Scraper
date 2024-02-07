@@ -23,11 +23,6 @@ const Home = () => {
       try {
         if (session?.user?.email) {
           const getStoresData = await getAllStores(session.user.email);
-          const getRecentStoresData: any = await getRecentStores();
-          console.log(`getRecentStoresData:`, getRecentStoresData);
-          if (getRecentStoresData) {
-            setRecentStores(getRecentStoresData);
-          }
           // Assuming getStoresData is an array of objects
           const getStores: Props[] = getStoresData.map((storeData: any) => ({
             _id: storeData._id,
@@ -48,6 +43,16 @@ const Home = () => {
       fetchStores();
     }
   }, [session?.user?.email]);
+  useEffect(() => {
+    const fetchRecentStores = async () => {
+      const getRecentStoresData: any = await getRecentStores();
+
+      if (getRecentStoresData) {
+        setRecentStores(getRecentStoresData);
+      }
+    };
+    fetchRecentStores();
+  }, []);
   return (
     <>
       <section className="px-6 md:px-20 py-14">
@@ -74,9 +79,11 @@ const Home = () => {
       </section>
 
       <section className="trending-section">
-        <h2 className="section-text">Brands You Have Searched</h2>
+        <h2 className="text-lg text-primary font-bold ">
+          Brands<span className="text-neutral-600"> You Have Searched</span>
+        </h2>
 
-        <div className="flex flex-wrap gap-x-8 gap-y-2">
+        <div className="flex flex-wrap gap-x-8 gap-y-1">
           {stores.length > 0 ? (
             stores?.map((product, index) => (
               <RestaurantCard
@@ -86,8 +93,8 @@ const Home = () => {
               />
             ))
           ) : (
-            <p className="text-center font-semibold text-lg text-neutral-700">
-              You have not searched brands yet
+            <p className="text-center font-semibold text-md text-orange-400">
+              No stores found. Please search for a store to explore!
             </p>
           )}
         </div>
@@ -96,19 +103,14 @@ const Home = () => {
         <h2 className="section-text">Recent Searched Brands</h2>
 
         <div className="flex flex-wrap gap-x-8 gap-y-2">
-          {recentStores.length > 0 ? (
-            stores?.map((product, index) => (
+          {recentStores.length > 0 &&
+            recentStores?.map((product, index) => (
               <RestaurantCard
                 key={index}
                 keyId={product._id}
                 data={product.scrapeData}
               />
-            ))
-          ) : (
-            <p className="text-center font-semibold text-lg text-neutral-700">
-              There are not searched brands yet
-            </p>
-          )}
+            ))}
         </div>
       </section>
     </>

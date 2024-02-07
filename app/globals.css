@@ -25,7 +25,7 @@
   }
 
   .section-text {
-    @apply text-secondary text-[32px] font-semibold;
+    @apply text-neutral-600 text-[20px] font-semibold;
   }
 
   .small-text {
@@ -33,12 +33,12 @@
   }
 
   .trending-section {
-    @apply flex flex-col gap-10 px-6 md:px-20 py-2;
+    @apply flex flex-col gap-5 px-6 md:px-20 py-2;
   }
 
   /* PRODUCT DETAILS PAGE STYLES */
   .product-container {
-    @apply flex flex-col gap-16 flex-wrap px-6 md:px-20 py-24;
+    @apply flex flex-col gap-10 flex-wrap px-6 md:px-20 py-24;
   }
 
   .product-image {
@@ -135,5 +135,8 @@
 
   .flex-start {
     @apply flex justify-start items-center;
+  }
+  .blue-gradient_text {
+    @apply bg-gradient-to-r from-[#00c6ff] to-[#0072ff] bg-clip-text text-transparent;
   }
 }
