@@ -55,7 +55,7 @@ const Home = () => {
   }, []);
   return (
     <>
-      <section className="px-6 md:px-20 py-14">
+      <section className="px-6 md:px-20 py-6">
         <div className="flex max-xl:flex-col gap-16">
           <div className="flex flex-col justify-center">
             <p className="small-text">
@@ -77,7 +77,20 @@ const Home = () => {
           </div>
         </div>
       </section>
-
+      {stores.length === 0 && (
+        <section className="px-6 md:px-20 py-2">
+          <h2 className="text-sm md:text-md text-neutral-500 font-bold ">
+            📌 Thank you for using our store search feature!
+            <br /> We're working hard to fetch the most relevant information for
+            you. When you search for a store, our system retrieves data from the
+            Naver API and scrapes additional details from Naver Maps. This
+            process may take up to 1 minute, so we appreciate your patience.
+            Once the search is complete, the information for your store will be
+            displayed below. <br />
+            Thank you for waiting!
+          </h2>
+        </section>
+      )}
       <section className="trending-section">
         <h2 className="text-lg text-primary font-bold ">
           Brands<span className="text-neutral-600"> You Have Searched</span>

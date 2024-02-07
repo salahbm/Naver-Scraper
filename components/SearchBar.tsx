@@ -1,17 +1,17 @@
-"use client";
-import { scrapeAndStoreProduct } from "@/lib/actions";
-import { getIframeFromSearch } from "@/lib/scraper/helperFunctions";
-import { NaverKeywordData } from "@/types";
-import { useSession } from "next-auth/react";
-import React, { FormEvent, useEffect, useState } from "react";
+'use client';
+import { scrapeAndStoreProduct } from '@/lib/actions';
+import { getIframeFromSearch } from '@/lib/scraper/helperFunctions';
+import { NaverKeywordData } from '@/types';
+import { useSession } from 'next-auth/react';
+import React, { FormEvent, useEffect, useState } from 'react';
 
 const isValidNaverProductUrl = (searchName: string): boolean => {
   try {
     // Extract the path from the searchName
 
     const words = searchName
-      .split(" ")
-      .filter((word: any) => word.trim() !== "");
+      .split(' ')
+      .filter((word: any) => word.trim() !== '');
 
     // Check if the number of words is more than 2
     const isValid = words.length >= 2;
@@ -28,11 +28,11 @@ const extractNumericDistance = (distance: string) => {
 
   if (numericValue !== null) {
     // Check if the original distance contains 'km' or 'm' and format accordingly
-    const isKilometers = distance.toLowerCase().includes("km");
+    const isKilometers = distance.toLowerCase().includes('km');
     return isKilometers ? `${numericValue} km` : `${numericValue} m`;
   }
 
-  return "";
+  return '';
 };
 
 async function getResultFromNaverAd(searchPrompt: string) {
@@ -46,11 +46,11 @@ async function getResultFromNaverAd(searchPrompt: string) {
 
       return JSON.parse(data.data);
     } else {
-      console.error("Error:", response.status);
+      console.error('Error:', response.status);
       // Handle error status
     }
   } catch (error) {
-    console.error("Error:", error);
+    console.error('Error:', error);
     // Handle other errors
   }
 }
@@ -59,7 +59,7 @@ const SearchBar = () => {
 
   // states
   const [isLoading, setIsLoading] = useState(false);
-  const [searchPrompt, setSearchPrompt] = useState("");
+  const [searchPrompt, setSearchPrompt] = useState('');
   const [searchedResults, setSearchedResults] = useState([]);
   const [naverKeywords, setNaverKeywords] = useState([]);
 
@@ -105,7 +105,7 @@ const SearchBar = () => {
     if (!url) return;
     setIsLoading(true);
     try {
-      if (session && session.user.email && url != "") {
+      if (session && session.user.email && url != '') {
         await scrapeAndStoreProduct(
           searchPrompt,
           session.user.email,
@@ -113,7 +113,7 @@ const SearchBar = () => {
           naverKeywords
         );
       } else {
-        console.log("Error in selecting Brand or Email");
+        console.log('Error in selecting Brand or Email');
       }
     } catch (error: any) {
       console.log(`file: SearchBar.tsx:77 ~ error:`, error.message);
@@ -131,7 +131,7 @@ const SearchBar = () => {
           await handleScrapeFromNaver(link);
         })();
       } else {
-        console.log("Link is empty");
+        console.log('Link is empty');
       }
     }
   }, [searchedResults]);
@@ -155,16 +155,16 @@ const SearchBar = () => {
           className="searchbar-btn"
           disabled={!session?.user?.email}
         >
-          {isLoading ? "Searching..." : "Search"}
+          {isLoading ? 'Searching...' : 'Search'}
         </button>
       </form>
       <div
         className={`w-full overflow-auto  p-2  ${
-          isLoading ? "block" : "hidden"
+          isLoading ? 'block' : 'hidden'
         }`}
       >
         <p className="font-semibold text-neutral-600 animate-pulse">
-          Scraping and Storing data...{" "}
+          Scraping and Storing data... 1min{' '}
         </p>
       </div>
       {/* <div>
@@ -180,8 +180,8 @@ const SearchBar = () => {
       </div> */}
       <div
         className={`w-full max-h-[350px] min-h-[100px] overflow-auto border px-4 p-2 rounded-md ${
-          searchedResults.length > 1 ? "" : "hidden"
-        }  ${isLoading ? " hidden" : ""}`}
+          searchedResults.length > 1 ? '' : 'hidden'
+        }  ${isLoading ? ' hidden' : ''}`}
       >
         <p className="text-neutral-600 font-bold mx-1 border-b ">
           Scroll Up 📜
